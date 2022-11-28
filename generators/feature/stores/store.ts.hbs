@@ -1,0 +1,50 @@
+import { produce } from 'immer';
+import create from 'zustand';
+import { persist } from 'zustand/middleware';
+
+import {
+  {{properCase name}}Create,
+  {{properCase name}}Type,
+  {{properCase name}}s,
+} from '@/features/{{name}}s';
+import { uuid } from '@/lib/uuid';
+
+export interface {{properCase name}}Store {
+  {{name}}s: {{properCase name}}s;
+  add{{properCase name}}: (new{{properCase name}}: {{properCase name}}Create) => void;
+  edit{{properCase name}}: (updated{{properCase name}}: {{properCase name}}Type) => void;
+  delete{{properCase name}}: ({{name}}ToDelete: {{properCase name}}Type) => void;
+}
+
+export const use{{properCase name}}s = create<{{properCase name}}Store>(
+  persist(
+    (set) => ({
+      {{name}}s: {},
+      add{{properCase name}}: (new{{properCase name}}) =>
+        set(
+          produce((state) => {
+            const {{name}}Id = uuid();
+            state.{{name}}s[{{name}}Id] = {
+              ...new{{properCase name}},
+              id: {{name}}Id,
+            };
+          })
+        ),
+      edit{{properCase name}}: (updated{{properCase name}}) =>
+        set(
+          produce((state) => {
+            state.{{name}}s[updated{{properCase name}}.id] = updated{{properCase name}};
+          })
+        ),
+      delete{{properCase name}}: ({{name}}) =>
+        set(
+          produce((state) => {
+            delete state.{{name}}s[{{name}}.id];
+          })
+        ),
+    }),
+    {
+      name: '{{name}}s',
+    }
+  )
+);
