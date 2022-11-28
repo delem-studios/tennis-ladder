@@ -21,55 +21,40 @@ const schema = yup.object({
     .string()
     .email('Must be a valid email')
     .required('Please provide your email address.'),
-  name: yup
-    .string()
-    .min(2, 'Must be at least 2 characters.')
-    .max(100, 'Must be at most 100 characters.'),
   password: yup
     .string()
-    .required('Please provide a password.')
+    .required('Please provide your password.')
     .min(8, 'Must be at least 8 characters.')
-    .max(256, 'Must be at most 256 characters.')
-    .matches(
-      /^[a-zA-Z0-9!@#$%^&*()]+$/,
-      'Password can only contain alphanumeric characters and the following special characters: !@#$%^&*().'
-    )
-    .matches(/[a-z]/, 'Password must contain at least one lowercase character.')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase character.')
-    .matches(/[0-9]/, 'Password must contain at least one number.')
-    .matches(
-      /[!@#$%^&*()]/,
-      'Password must contain at least one special character.'
-    ),
+    .max(256, 'Must be at most 256 characters.'),
 });
 
-export interface RegisterFormFields {
+export interface LoginFormFields {
   email: string;
   name: string;
   password: string;
 }
 
-export interface RegisterFormProps {}
+export interface LoginFormProps {}
 
-export const RegisterForm = ({}: RegisterFormProps) => {
+export const LoginForm = ({}: LoginFormProps) => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
     setError,
-  } = useForm<RegisterFormFields>({
+  } = useForm<LoginFormFields>({
     resolver: yupResolver(schema),
   });
   const toast = useToast();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<RegisterFormFields> = async (values) => {
+  const onSubmit: SubmitHandler<LoginFormFields> = async (values) => {
     try {
       await client
         .collection('users')
-        .create({ ...values, passwordConfirm: values.password });
+        .authWithPassword(values.email, values.password);
 
-      toast({ title: "You've successfully created a new account!" });
+      toast({ title: "You've logged in successfully!" });
 
       navigate('/');
     } catch (error) {
@@ -77,7 +62,12 @@ export const RegisterForm = ({}: RegisterFormProps) => {
         const { code, data } = error.data;
 
         if (code === 400) {
-          const field = Object.keys(data)[0] as keyof RegisterFormFields;
+          toast({
+            title: 'Unable to login with the provided credentials.',
+            status: 'error',
+          });
+
+          const field = Object.keys(data)[0] as keyof LoginFormFields;
           const message = data[field].message;
 
           setError(field, { type: 'custom', message });
@@ -99,14 +89,6 @@ export const RegisterForm = ({}: RegisterFormProps) => {
           />
           <FormErrorMessage>
             {errors.email && errors.email.message}
-          </FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={Boolean(errors.name)}>
-          <FormLabel htmlFor="name">Name</FormLabel>
-          <Input id="name" placeholder="Name" {...register('name')} />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
           </FormErrorMessage>
         </FormControl>
 

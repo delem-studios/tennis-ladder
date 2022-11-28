@@ -43,27 +43,27 @@ const schema = yup.object({
     ),
 });
 
-export interface RegisterFormFields {
-  email: string;
+export interface LadderFormFields {
   name: string;
+  description: string;
   password: string;
 }
 
-export interface RegisterFormProps {}
+export interface LadderFormProps {}
 
-export const RegisterForm = ({}: RegisterFormProps) => {
+export const LadderForm = ({}: LadderFormProps) => {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
     setError,
-  } = useForm<RegisterFormFields>({
+  } = useForm<LadderFormFields>({
     resolver: yupResolver(schema),
   });
   const toast = useToast();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<RegisterFormFields> = async (values) => {
+  const onSubmit: SubmitHandler<LadderFormFields> = async (values) => {
     try {
       await client
         .collection('users')
@@ -77,7 +77,7 @@ export const RegisterForm = ({}: RegisterFormProps) => {
         const { code, data } = error.data;
 
         if (code === 400) {
-          const field = Object.keys(data)[0] as keyof RegisterFormFields;
+          const field = Object.keys(data)[0] as keyof LadderFormFields;
           const message = data[field].message;
 
           setError(field, { type: 'custom', message });
@@ -89,16 +89,16 @@ export const RegisterForm = ({}: RegisterFormProps) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <VStack>
-        <FormControl isInvalid={Boolean(errors.email)}>
-          <FormLabel htmlFor="email">Email</FormLabel>
+        <FormControl isInvalid={Boolean(errors.name)}>
+          <FormLabel htmlFor="name">Name</FormLabel>
           <Input
-            id="email"
-            type="email"
-            placeholder="Email"
-            {...register('email')}
+            id="name"
+            type="name"
+            placeholder="Name"
+            {...register('name')}
           />
           <FormErrorMessage>
-            {errors.email && errors.email.message}
+            {errors.name && errors.name.message}
           </FormErrorMessage>
         </FormControl>
 
@@ -110,18 +110,6 @@ export const RegisterForm = ({}: RegisterFormProps) => {
           </FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={Boolean(errors.password)}>
-          <FormLabel htmlFor="password">Password</FormLabel>
-          <Input
-            id="password"
-            type="password"
-            placeholder="Password"
-            {...register('password')}
-          />
-          <FormErrorMessage>
-            {errors.password && errors.password.message}
-          </FormErrorMessage>
-        </FormControl>
         <Button
           mt={4}
           colorScheme="purple"

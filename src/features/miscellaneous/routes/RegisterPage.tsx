@@ -1,14 +1,15 @@
-import { Link } from '@/components';
-import { RegisterForm } from '@/features/miscellaneous';
 import React from 'react';
+
+import { AuthLayout, Link } from '@/components';
+import { RegisterForm } from '@/features/miscellaneous';
 
 export interface RegisterPageProps {}
 
 export const RegisterPage = ({}: RegisterPageProps) => {
   return (
-    <div>
+    <AuthLayout>
       <Link to="/home">Go Back</Link>
       <RegisterForm />
-    </div>
+    </AuthLayout>
   );
 };

@@ -1,5 +1,5 @@
 import { Link as ChakraLink } from '@chakra-ui/layout';
-import { Flex, Heading, useColorModeValue } from '@chakra-ui/react';
+import { Flex, useColorModeValue } from '@chakra-ui/react';
 import React from 'react';
 import { NavLink, NavLinkProps } from 'react-router-dom';
 
