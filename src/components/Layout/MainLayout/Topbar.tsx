@@ -31,7 +31,7 @@ export const Topbar = ({}: TopbarProps) => {
         bg="bg-surface"
         boxShadow={useColorModeValue('sm', 'sm-dark')}
       >
-        <Box py={{ base: '4', lg: '5' }} px={4}>
+        <Box py={{ base: '3' }} px={4}>
           <HStack spacing="10" justify="space-between">
             <Heading fontWeight="black" size="lg">
               Ladder
@@ -39,7 +39,7 @@ export const Topbar = ({}: TopbarProps) => {
             {isDesktop ? (
               <Flex justify="space-between" flex="1">
                 <ButtonGroup variant="link" spacing="8">
-                  {['ladder'].map((item) => (
+                  {['ladders'].map((item) => (
                     <Button
                       key={item}
                       onClick={() => navigate(`/${item}`)}

@@ -1,3 +1,4 @@
+import { Container } from '@chakra-ui/react';
 import React from 'react';
 
 import { MainLayout } from '@/components';
@@ -8,7 +9,9 @@ export interface LadderCreatePageProps {}
 export const LadderCreatePage = ({}: LadderCreatePageProps) => {
   return (
     <MainLayout>
-      <LadderForm />
+      <Container>
+        <LadderForm />
+      </Container>
     </MainLayout>
   );
 };

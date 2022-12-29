@@ -1,9 +1,4 @@
-import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-} from '@chakra-ui/react';
+import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
 import React from 'react';
 import { FieldValues, useFormContext } from 'react-hook-form';
 
@@ -11,23 +6,24 @@ export interface FormItemProps {
   name: string;
   label?: string;
 
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export const FormItem = <T extends FieldValues>({
   name,
+  label,
   children,
 }: FormItemProps) => {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<any>();
+  const { getFieldState } = useFormContext<T>();
 
-  const errorString = String(errors[name]?.message);
+  const state = getFieldState(name as any);
+  const errorString = state.error?.message;
 
   return (
-    <FormControl isInvalid={Boolean(errors[name])}>
-      <FormLabel htmlFor={name}>{name}</FormLabel>
+    <FormControl isInvalid={Boolean(errorString)}>
+      <FormLabel htmlFor={name} textTransform="capitalize">
+        {label || name}
+      </FormLabel>
       {children}
       <FormErrorMessage>{errorString}</FormErrorMessage>
     </FormControl>

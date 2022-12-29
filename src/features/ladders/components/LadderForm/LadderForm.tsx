@@ -1,73 +1,63 @@
-import {
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, HStack, Input, Textarea, VStack } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ClientResponseError } from 'pocketbase';
 import React from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { FormItem } from '@/components';
 import { useToast } from '@/hooks';
 import { client } from '@/libs/client';
 
 const schema = yup.object({
-  email: yup
-    .string()
-    .email('Must be a valid email')
-    .required('Please provide your email address.'),
   name: yup
     .string()
+    .required('Please provide a name for your ladder.')
     .min(2, 'Must be at least 2 characters.')
     .max(100, 'Must be at most 100 characters.'),
-  password: yup
-    .string()
-    .required('Please provide a password.')
-    .min(8, 'Must be at least 8 characters.')
-    .max(256, 'Must be at most 256 characters.')
-    .matches(
-      /^[a-zA-Z0-9!@#$%^&*()]+$/,
-      'Password can only contain alphanumeric characters and the following special characters: !@#$%^&*().'
-    )
-    .matches(/[a-z]/, 'Password must contain at least one lowercase character.')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase character.')
-    .matches(/[0-9]/, 'Password must contain at least one number.')
-    .matches(
-      /[!@#$%^&*()]/,
-      'Password must contain at least one special character.'
-    ),
+  description: yup.string().max(10000, 'Must be at most 10000 characters.'),
+  startDate: yup
+    .date()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .required('Please provide the start date.'),
+  endDate: yup
+    .date()
+    .nullable()
+    .transform((curr, orig) => (orig === '' ? null : curr))
+    .required('Please provide the start date.')
+    .min(yup.ref('startDate'), ({ min }) => `Date needs to be after ${min}`),
 });
 
 export interface LadderFormFields {
   name: string;
   description: string;
-  password: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface LadderFormProps {}
 
 export const LadderForm = ({}: LadderFormProps) => {
+  const toast = useToast();
+  const navigate = useNavigate();
+  const methods = useForm<LadderFormFields>({
+    resolver: yupResolver(schema),
+  });
+
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
     setError,
-  } = useForm<LadderFormFields>({
-    resolver: yupResolver(schema),
-  });
-  const toast = useToast();
-  const navigate = useNavigate();
+  } = methods;
 
   const onSubmit: SubmitHandler<LadderFormFields> = async (values) => {
+    console.log('Values:', values);
+
     try {
-      await client
-        .collection('users')
-        .create({ ...values, passwordConfirm: values.password });
+      await client.collection('ladders').create({ ...values });
 
       toast({ title: "You've successfully created a new account!" });
 
@@ -87,38 +77,48 @@ export const LadderForm = ({}: LadderFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <VStack>
-        <FormControl isInvalid={Boolean(errors.name)}>
-          <FormLabel htmlFor="name">Name</FormLabel>
-          <Input
-            id="name"
-            type="name"
-            placeholder="Name"
-            {...register('name')}
-          />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack alignItems="flex-start">
+          <FormItem name="name">
+            <Input id="name" placeholder="Name" {...register('name')} />
+          </FormItem>
+          <FormItem name="description">
+            <Textarea
+              id="description"
+              placeholder="Description"
+              {...register('description')}
+            />
+          </FormItem>
+          <HStack align="flex-start">
+            <FormItem name="startDate" label="Start Date">
+              <Input
+                id="startDate"
+                placeholder="Start Date"
+                type="date"
+                {...register('startDate')}
+              />
+            </FormItem>
+            <FormItem name="endDate" label="End Date">
+              <Input
+                id="endDate"
+                placeholder="End Date"
+                type="date"
+                {...register('endDate')}
+              />
+            </FormItem>
+          </HStack>
 
-        <FormControl isInvalid={Boolean(errors.name)}>
-          <FormLabel htmlFor="name">Name</FormLabel>
-          <Input id="name" placeholder="Name" {...register('name')} />
-          <FormErrorMessage>
-            {errors.name && errors.name.message}
-          </FormErrorMessage>
-        </FormControl>
-
-        <Button
-          mt={4}
-          colorScheme="purple"
-          isLoading={isSubmitting}
-          type="submit"
-        >
-          Submit
-        </Button>
-      </VStack>
-    </form>
+          <Button
+            mt={4}
+            colorScheme="purple"
+            isLoading={isSubmitting}
+            type="submit"
+          >
+            Submit
+          </Button>
+        </VStack>
+      </form>
+    </FormProvider>
   );
 };
