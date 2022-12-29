@@ -1,8 +1,27 @@
-import { Button, HStack, Input, Textarea, VStack } from '@chakra-ui/react';
+import {
+  Button,
+  HStack,
+  Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Radio,
+  RadioGroup,
+  Stack,
+  Textarea,
+  VStack,
+} from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ClientResponseError } from 'pocketbase';
 import React from 'react';
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+} from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
@@ -17,6 +36,10 @@ const schema = yup.object({
     .min(2, 'Must be at least 2 characters.')
     .max(100, 'Must be at most 100 characters.'),
   description: yup.string().max(10000, 'Must be at most 10000 characters.'),
+  maxParticipants: yup
+    .number()
+    .min(2, 'Must be greater than 1.')
+    .max(999, 'Must be less than 1000.'),
   startDate: yup
     .date()
     .nullable()
@@ -27,14 +50,20 @@ const schema = yup.object({
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
     .required('Please provide the start date.')
-    .min(yup.ref('startDate'), ({ min }) => `Date needs to be after ${min}`),
+    .min(yup.ref('startDate'), 'End date must be after the start date.'),
+  format: yup
+    .string()
+    .oneOf(['singles', 'doubles'])
+    .required('Please provide the format.'),
 });
 
 export interface LadderFormFields {
   name: string;
   description: string;
+  maxParticipants: number;
   startDate: string;
   endDate: string;
+  format: 'singles' | 'doubles';
 }
 
 export interface LadderFormProps {}
@@ -44,9 +73,13 @@ export const LadderForm = ({}: LadderFormProps) => {
   const navigate = useNavigate();
   const methods = useForm<LadderFormFields>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      maxParticipants: 100,
+    },
   });
 
   const {
+    control,
     handleSubmit,
     register,
     formState: { isSubmitting },
@@ -57,11 +90,18 @@ export const LadderForm = ({}: LadderFormProps) => {
     console.log('Values:', values);
 
     try {
-      await client.collection('ladders').create({ ...values });
+      const slug = values.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 
-      toast({ title: "You've successfully created a new account!" });
+      await client.collection('ladders').create({ ...values, slug });
 
-      navigate('/');
+      toast({ title: "You've successfully created a new ladder!" });
+
+      navigate('/ladders');
     } catch (error) {
       if (error instanceof ClientResponseError) {
         const { code, data } = error.data;
@@ -95,7 +135,7 @@ export const LadderForm = ({}: LadderFormProps) => {
               <Input
                 id="startDate"
                 placeholder="Start Date"
-                type="date"
+                type="datetime-local"
                 {...register('startDate')}
               />
             </FormItem>
@@ -103,11 +143,38 @@ export const LadderForm = ({}: LadderFormProps) => {
               <Input
                 id="endDate"
                 placeholder="End Date"
-                type="date"
+                type="datetime-local"
                 {...register('endDate')}
               />
             </FormItem>
           </HStack>
+          <FormItem name="maxParticipants" label="Maximum Participants">
+            <NumberInput>
+              <NumberInputField
+                id="maxParticipants"
+                {...register('maxParticipants')}
+              />
+              <NumberInputStepper>
+                <NumberIncrementStepper />
+                <NumberDecrementStepper />
+              </NumberInputStepper>
+            </NumberInput>
+          </FormItem>
+
+          <FormItem name="format" label="Format">
+            <Controller
+              name="format"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <RadioGroup onChange={onChange} value={value}>
+                  <Stack>
+                    <Radio value="singles">Singles</Radio>
+                    <Radio value="doubles">Doubles</Radio>
+                  </Stack>
+                </RadioGroup>
+              )}
+            />
+          </FormItem>
 
           <Button
             mt={4}
