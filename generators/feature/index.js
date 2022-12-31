@@ -20,11 +20,6 @@ export default {
     },
     {
       type: 'add',
-      path: 'src/features/{{name}}/types/index.tsx',
-      templateFile: 'generators/feature/empty.tsx.hbs',
-    },
-    {
-      type: 'add',
       path: 'src/features/{{name}}/routes/index.tsx',
       templateFile: 'generators/feature/page.index.tsx.hbs',
     },

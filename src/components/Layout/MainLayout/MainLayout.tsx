@@ -1,21 +1,32 @@
-import { Topbar } from './Topbar';
-// import { Navbar } from './Navbar';
-import { Box, Flex, Heading } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import React from 'react';
 
+import { Topbar } from './Topbar';
+
 export interface MainLayoutProps {
+  container?: boolean;
   children: React.ReactNode;
 }
 
-export const MainLayout = ({ children }: MainLayoutProps) => {
+export const MainLayout = ({ container, children }: MainLayoutProps) => {
   return (
     <Box height="100%" width="100%">
-      {/*<Box width="250px" bgColor="purple.50">*/}
-      {/*  <Heading fontWeight="black">Ladder</Heading>*/}
-      {/*  <Navbar />*/}
-      {/*</Box>*/}
       <Topbar />
-      <Box>{children}</Box>
+      {container ? (
+        <Container
+          bgColor="white"
+          height="calc(100% - 64px)"
+          maxW={{
+            base: 'container.sm',
+            sm: 'container.md',
+            md: 'container.lg',
+          }}
+        >
+          {children}
+        </Container>
+      ) : (
+        <Box>{children}</Box>
+      )}
     </Box>
   );
 };

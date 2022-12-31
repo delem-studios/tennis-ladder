@@ -8,10 +8,8 @@ export interface LadderCreatePageProps {}
 
 export const LadderCreatePage = ({}: LadderCreatePageProps) => {
   return (
-    <MainLayout>
-      <Container>
-        <LadderForm />
-      </Container>
+    <MainLayout container>
+      <LadderForm />
     </MainLayout>
   );
 };

@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 
-import { LadderCreatePage, LaddersPage } from '@/features/ladders';
+import { LadderCreatePage, LadderPage, LaddersPage } from '@/features/ladders';
 import {
   HomePage,
   LoginPage,
@@ -18,5 +18,6 @@ export const publicRoutes = [
   { path: '/login', element: <LoginPage /> },
   { path: '/logout', element: <LogoutPage /> },
   { path: '/ladders', element: <LaddersPage /> },
+  { path: '/ladders/:ladderSlug', element: <LadderPage /> },
   { path: '/ladders/create', element: <LadderCreatePage /> },
 ];

@@ -14,6 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import dayjs from 'dayjs';
 import { ClientResponseError } from 'pocketbase';
 import React from 'react';
 import {
@@ -39,7 +40,7 @@ const schema = yup.object({
   maxParticipants: yup
     .number()
     .min(2, 'Must be greater than 1.')
-    .max(999, 'Must be less than 1000.'),
+    .max(200, 'Must be at most 200 participants.'),
   startDate: yup
     .date()
     .nullable()
@@ -74,7 +75,10 @@ export const LadderForm = ({}: LadderFormProps) => {
   const methods = useForm<LadderFormFields>({
     resolver: yupResolver(schema),
     defaultValues: {
+      startDate: dayjs().toISOString().slice(0, 16),
+      endDate: dayjs().add(7, 'day').toISOString().slice(0, 16),
       maxParticipants: 100,
+      format: 'singles',
     },
   });
 
@@ -97,7 +101,9 @@ export const LadderForm = ({}: LadderFormProps) => {
         .replace(/[\s_-]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-      await client.collection('ladders').create({ ...values, slug });
+      await client
+        .collection('ladders')
+        .create({ ...values, slug, organizers: [client.authStore.model?.id] });
 
       toast({ title: "You've successfully created a new ladder!" });
 

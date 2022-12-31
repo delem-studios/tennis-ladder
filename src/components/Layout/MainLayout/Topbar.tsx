@@ -25,7 +25,7 @@ export const Topbar = ({}: TopbarProps) => {
   const user = client.authStore.model;
 
   return (
-    <Box as="section">
+    <Box as="section" bgColor="white" position="sticky" top={0}>
       <Box
         as="nav"
         bg="bg-surface"
@@ -33,7 +33,12 @@ export const Topbar = ({}: TopbarProps) => {
       >
         <Box py={{ base: '3' }} px={4}>
           <HStack spacing="10" justify="space-between">
-            <Heading fontWeight="black" size="lg">
+            <Heading
+              as="a"
+              onClick={() => navigate('/')}
+              fontWeight="black"
+              size="lg"
+            >
               Ladder
             </Heading>
             {isDesktop ? (
