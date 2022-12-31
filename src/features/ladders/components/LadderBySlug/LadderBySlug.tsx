@@ -1,8 +1,6 @@
 import {
-  Badge,
   Box,
   Flex,
-  HStack,
   Heading,
   Stat,
   StatGroup,
@@ -14,10 +12,10 @@ import {
   TabPanels,
   Tabs,
   Tag,
-  Text,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   Ladder,
@@ -28,7 +26,6 @@ import {
   Leaderboard,
   ParticipantsList,
   RegisterButton,
-  useParticipants,
 } from '@/features/ladders';
 
 export interface LadderBySlugProps {
@@ -36,7 +33,42 @@ export interface LadderBySlugProps {
 }
 
 export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
-  const { data: participants } = useParticipants(ladder.id);
+  const navigate = useNavigate();
+  const { tabSlug } = useParams();
+
+  const tabs = [
+    {
+      name: 'Ladder',
+      slug: 'overview',
+      Component: <Leaderboard ladder={ladder} />,
+    },
+    {
+      name: 'Matches',
+      slug: 'matches',
+      Component: <LadderMatches ladder={ladder} />,
+    },
+    {
+      name: 'Challenges',
+      slug: 'challenges',
+      Component: <LadderChallenges ladder={ladder} />,
+    },
+    {
+      name: 'Participants',
+      slug: 'participants',
+      Component: <ParticipantsList ladderId={ladder.id} />,
+    },
+    {
+      name: 'Details',
+      slug: 'details',
+      Component: <LadderDetails ladder={ladder} />,
+    },
+    {
+      name: 'Settings',
+      slug: 'settings',
+      Component: <LadderSettings ladder={ladder} />,
+    },
+  ];
+  const tabIndex = tabs.findIndex((tab) => tab.slug === tabSlug);
 
   return (
     <div>
@@ -66,34 +98,26 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
             </StatNumber>
           </Stat>
         </StatGroup>
-        <Tabs variant="soft-rounded" py={6} isLazy>
+        <Tabs
+          variant="soft-rounded"
+          index={tabIndex}
+          py={6}
+          isLazy
+          onChange={(tabIndex) => {
+            navigate(`/ladders/${ladder.slug}/${tabs[tabIndex].slug}`);
+          }}
+        >
           <TabList justifyContent="flex-start">
-            <Tab>Ladder</Tab>
-            <Tab>Matches</Tab>
-            <Tab>Challenges</Tab>
-            <Tab>Participants</Tab>
-            <Tab>Details</Tab>
-            <Tab>Settings</Tab>
+            {tabs.map((tab) => (
+              <Tab key={`tab-menu-${tab.slug}`}>{tab.name}</Tab>
+            ))}
           </TabList>
           <TabPanels>
-            <TabPanel>
-              <Leaderboard ladder={ladder} />
-            </TabPanel>
-            <TabPanel>
-              <LadderMatches ladder={ladder} />
-            </TabPanel>
-            <TabPanel>
-              <LadderChallenges ladder={ladder} />
-            </TabPanel>
-            <TabPanel>
-              <ParticipantsList ladderId={ladder.id} />
-            </TabPanel>
-            <TabPanel>
-              <LadderDetails ladder={ladder} />
-            </TabPanel>
-            <TabPanel>
-              <LadderSettings ladder={ladder} />
-            </TabPanel>
+            {tabs.map((tab) => (
+              <TabPanel key={`tab-component-${tab.slug}`}>
+                {tab.Component}
+              </TabPanel>
+            ))}
           </TabPanels>
         </Tabs>
       </Box>

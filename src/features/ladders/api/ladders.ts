@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import { Ladder, Participant, Rules } from '@/features/ladders';
-import { useToast } from '@/hooks';
 import { client } from '@/libs/client';
 import { Expand, User } from '@/types';
 
@@ -54,6 +53,19 @@ export const useUpdateLadder = () => {
     {
       onSuccess: (updatedLadder) => {
         void queryClient.invalidateQueries(['ladders', updatedLadder.slug]);
+      },
+    }
+  );
+};
+
+export const useDeleteLadder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (ladderId: string) => client.collection('ladders').delete(ladderId),
+    {
+      onSuccess: () => {
+        void queryClient.invalidateQueries(['ladders']);
       },
     }
   );

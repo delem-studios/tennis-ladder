@@ -3,8 +3,6 @@ import {
   Button,
   Container,
   Flex,
-  HStack,
-  Heading,
   Input,
   Switch,
   Text,
@@ -12,10 +10,11 @@ import {
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Ladder, useUpdateLadder } from '@/features/ladders';
+import { AlertConfirmDialog } from '@/components';
+import { Ladder, useDeleteLadder, useUpdateLadder } from '@/features/ladders';
 import { useBoolean, useToast } from '@/hooks';
-import { client } from '@/libs/client';
 
 const SettingsItem = ({
   title,
@@ -44,9 +43,11 @@ export interface LadderSettingsProps {
 }
 
 export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
+  const navigate = useNavigate();
   const toast = useToast();
   const { state: loading, setState: setLoading } = useBoolean();
   const { mutate: updateLadder } = useUpdateLadder();
+  const { mutate: deleteLadder } = useDeleteLadder();
 
   const handleUpdate = (partialUpdate: Partial<Ladder>) => {
     setLoading(true);
@@ -57,6 +58,23 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
       onError: (error) => {
         toast({ title: 'Oops! Unable to update the ladder.', status: 'error' });
         console.error(error);
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
+  };
+
+  const handleDelete = () => {
+    setLoading(true);
+
+    deleteLadder(ladder.id, {
+      onSuccess: () => {
+        toast({ title: 'Ladder deleted successfully!' });
+        navigate('/ladders');
+      },
+      onError: () => {
+        toast({ title: 'Unable to delete ladder.', status: 'error' });
       },
       onSettled: () => {
         setLoading(false);
@@ -85,6 +103,7 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
             onClick={() =>
               handleUpdate({ isStarted: true, isRegistrationOpen: false })
             }
+            colorScheme="blue"
           >
             Start
           </Button>
@@ -121,6 +140,13 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
               handleUpdate({ endDate: dayjs(e.target.value).format() });
             }}
             isDisabled={loading}
+          />
+        </SettingsItem>
+        <SettingsItem title="Delete" help="Delete this ladder.">
+          <AlertConfirmDialog
+            header="Delete Ladder"
+            buttonText="Delete"
+            onConfirm={handleDelete}
           />
         </SettingsItem>
       </VStack>

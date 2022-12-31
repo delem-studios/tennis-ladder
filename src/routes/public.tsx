@@ -18,6 +18,10 @@ export const publicRoutes = [
   { path: '/login', element: <LoginPage /> },
   { path: '/logout', element: <LogoutPage /> },
   { path: '/ladders', element: <LaddersPage /> },
-  { path: '/ladders/:ladderSlug', element: <LadderPage /> },
+  {
+    path: '/ladders/:ladderSlug',
+    element: <Navigate to="overview" />,
+  },
+  { path: '/ladders/:ladderSlug/:tabSlug', element: <LadderPage /> },
   { path: '/ladders/create', element: <LadderCreatePage /> },
 ];

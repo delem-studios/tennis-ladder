@@ -10,7 +10,6 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
@@ -64,7 +63,7 @@ export const DataTable = <Data extends object>({
               // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
               const meta: any = cell.column.columnDef.meta;
               return (
-                <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                <Td key={cell.id} isNumeric={meta?.isNumeric} py={2} px={4}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Td>
               );
