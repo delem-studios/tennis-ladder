@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
-import { Ladder, Participant } from '@/features/ladders';
+import { Ladder, Participant, Rules } from '@/features/ladders';
 import { useToast } from '@/hooks';
 import { client } from '@/libs/client';
 import { Expand, User } from '@/types';
@@ -17,12 +17,12 @@ export const useLadderBySlug = (slug: string) => {
   );
 };
 
-export const useParticipants = (slug: string) => {
-  return useQuery(['ladders', slug, 'participants'], async () =>
+export const useParticipants = (ladderId: string) => {
+  return useQuery(['ladders', ladderId, 'participants'], async () =>
     client
       .collection('participants')
       .getFullList<Expand<Participant, { primaryPlayer: User }>>(200, {
-        'task.slug': slug,
+        filter: `ladder = "${ladderId}"`,
         expand: 'primaryPlayer',
       })
   );
@@ -42,5 +42,25 @@ export const useRegisterForLadder = () => {
         void queryClient.invalidateQueries(['ladders']);
       },
     }
+  );
+};
+
+export const useUpdateLadder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (updatedLadder: Ladder) =>
+      client.collection('ladders').update(updatedLadder.id, updatedLadder),
+    {
+      onSuccess: (updatedLadder) => {
+        void queryClient.invalidateQueries(['ladders', updatedLadder.slug]);
+      },
+    }
+  );
+};
+
+export const useRules = (ladderId: string) => {
+  return useQuery(['ladders', ladderId, 'rules'], async () =>
+    client.collection('rules').getFirstListItem<Rules>(`ladder="${ladderId}"`)
   );
 };

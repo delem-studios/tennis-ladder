@@ -31,6 +31,8 @@ export const DataTable = <Data extends object>({
     getCoreRowModel: getCoreRowModel(),
   });
 
+  if (!data) return <Loading />;
+
   return (
     <ChakraTable>
       <Thead>
@@ -56,23 +58,19 @@ export const DataTable = <Data extends object>({
         ))}
       </Thead>
       <Tbody>
-        {data ? (
-          table.getRowModel().rows.map((row) => (
-            <Tr key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
-                const meta: any = cell.column.columnDef.meta;
-                return (
-                  <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Td>
-                );
-              })}
-            </Tr>
-          ))
-        ) : (
-          <Loading />
-        )}
+        {table.getRowModel().rows.map((row) => (
+          <Tr key={row.id}>
+            {row.getVisibleCells().map((cell) => {
+              // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+              const meta: any = cell.column.columnDef.meta;
+              return (
+                <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Td>
+              );
+            })}
+          </Tr>
+        ))}
       </Tbody>
     </ChakraTable>
   );

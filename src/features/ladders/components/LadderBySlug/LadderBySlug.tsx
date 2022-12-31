@@ -36,7 +36,7 @@ export interface LadderBySlugProps {
 }
 
 export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
-  const { data: participants } = useParticipants(ladder.slug);
+  const { data: participants } = useParticipants(ladder.id);
 
   return (
     <div>
@@ -45,12 +45,12 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
           <Flex align="center">
             <Heading>{ladder.name}</Heading>
             {ladder.isRegistrationOpen && (
-              <Badge ml={4} colorScheme="green">
+              <Tag ml={4} colorScheme="green">
                 Registration Open
-              </Badge>
+              </Tag>
             )}
           </Flex>
-          <RegisterButton slug={ladder.slug} ladderId={ladder.id} />
+          <RegisterButton ladderId={ladder.id} />
         </Flex>
         <StatGroup>
           <Stat>
@@ -66,8 +66,8 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
             </StatNumber>
           </Stat>
         </StatGroup>
-        <Tabs variant="soft-rounded" py={6}>
-          <TabList>
+        <Tabs variant="soft-rounded" py={6} isLazy>
+          <TabList justifyContent="flex-start">
             <Tab>Ladder</Tab>
             <Tab>Matches</Tab>
             <Tab>Challenges</Tab>
@@ -86,7 +86,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
               <LadderChallenges ladder={ladder} />
             </TabPanel>
             <TabPanel>
-              <ParticipantsList slug={ladder.slug} />
+              <ParticipantsList ladderId={ladder.id} />
             </TabPanel>
             <TabPanel>
               <LadderDetails ladder={ladder} />

@@ -14,11 +14,11 @@ import { AiOutlineUser } from 'react-icons/all';
 import { useParticipants } from '@/features/ladders';
 
 export interface ParticipantsListProps {
-  slug: string;
+  ladderId: string;
 }
 
-export const ParticipantsList = ({ slug }: ParticipantsListProps) => {
-  const { data: participants } = useParticipants(slug);
+export const ParticipantsList = ({ ladderId }: ParticipantsListProps) => {
+  const { data: participants } = useParticipants(ladderId);
 
   return (
     <VStack align="flex-start">

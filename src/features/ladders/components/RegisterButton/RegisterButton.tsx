@@ -6,15 +6,14 @@ import { useBoolean, useToast } from '@/hooks';
 import { client } from '@/libs/client';
 
 export interface RegisterButtonProps {
-  slug: string;
   ladderId: string;
 }
 
-export const RegisterButton = ({ slug, ladderId }: RegisterButtonProps) => {
+export const RegisterButton = ({ ladderId }: RegisterButtonProps) => {
   const toast = useToast();
   const { state: loading, setState: setLoading } = useBoolean();
 
-  const { data } = useParticipants(slug);
+  const { data } = useParticipants(ladderId);
   const { mutate: register } = useRegisterForLadder();
 
   const userId = client.authStore.model?.id;
@@ -47,7 +46,7 @@ export const RegisterButton = ({ slug, ladderId }: RegisterButtonProps) => {
     <Button
       onClick={handleRegister}
       isLoading={loading}
-      disabled={isRegistered}
+      disabled={Boolean(isRegistered)}
     >
       {isRegistered ? 'Registered!' : 'Register'}
     </Button>
