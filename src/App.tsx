@@ -1,6 +1,8 @@
+import React from 'react';
+
+import '@/libs/dayjs';
 import { Providers } from '@/providers/Providers';
 import { AppRoutes } from '@/routes/routes';
-import React from 'react';
 
 interface AppProps {}
 

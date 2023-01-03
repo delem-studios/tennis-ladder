@@ -1,5 +1,6 @@
 import {
   Table as ChakraTable,
+  TableProps as ChakraTableProps,
   Tbody,
   Td,
   Th,
@@ -15,7 +16,7 @@ import {
 
 import { Loading } from '@/components';
 
-export interface TableProps<Data extends object> {
+export interface TableProps<Data extends object> extends ChakraTableProps {
   data?: Array<Data>;
   columns: ColumnDef<Data, any>[];
 }
@@ -23,6 +24,7 @@ export interface TableProps<Data extends object> {
 export const DataTable = <Data extends object>({
   columns,
   data,
+  ...rest
 }: TableProps<Data>) => {
   const table = useReactTable({
     columns,
@@ -33,7 +35,7 @@ export const DataTable = <Data extends object>({
   if (!data) return <Loading />;
 
   return (
-    <ChakraTable>
+    <ChakraTable {...rest}>
       <Thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <Tr key={headerGroup.id}>
@@ -63,7 +65,7 @@ export const DataTable = <Data extends object>({
               // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
               const meta: any = cell.column.columnDef.meta;
               return (
-                <Td key={cell.id} isNumeric={meta?.isNumeric} py={2} px={4}>
+                <Td key={cell.id} isNumeric={meta?.isNumeric}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </Td>
               );

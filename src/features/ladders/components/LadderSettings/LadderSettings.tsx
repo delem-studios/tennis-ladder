@@ -95,8 +95,8 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
           />
         </SettingsItem>
         <SettingsItem
-          title="Toggle Registration"
-          help="Open or close the registration."
+          title="Start Ladder"
+          help="Officially begin the ladder manually.."
         >
           <Button
             disabled={ladder.isStarted}

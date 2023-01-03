@@ -5,4 +5,6 @@ export interface User extends BaseEntity {
   email: string;
   name: string;
   avatar: string;
+  phone: string;
+  gender: 'male' | 'female';
 }

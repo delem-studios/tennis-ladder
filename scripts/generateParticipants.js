@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import PocketBase from 'pocketbase';
 
-const LADDER_ID = 'q7zdq4tuc0rgiln';
-const PARTICIPANT_COUNT = 5;
+const LADDER_ID = 'bk2lah4296oyryt';
+const PARTICIPANT_COUNT = 10;
 
 const pb = new PocketBase('http://127.0.0.1:8090');
 
@@ -27,9 +27,10 @@ const generateParticipants = async () => {
   }
 
   for (const participantId of participants) {
-    await pb
-      .collection('participants')
-      .create({ ladder: LADDER_ID, primaryPlayer: participantId });
+    await pb.collection('participants').create({
+      ladder: LADDER_ID,
+      primaryPlayer: participantId,
+    });
   }
 
   // "logout" the last authenticated account

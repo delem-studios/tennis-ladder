@@ -1,25 +1,29 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 
-import { useParticipants, useRegisterForLadder } from '@/features/ladders';
+import {
+  Ladder,
+  useParticipants,
+  useRegisterForLadder,
+} from '@/features/ladders';
 import { useBoolean, useToast } from '@/hooks';
 import { client } from '@/libs/client';
 
 export interface RegisterButtonProps {
-  ladderId: string;
+  ladder: Ladder;
 }
 
-export const RegisterButton = ({ ladderId }: RegisterButtonProps) => {
+export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
   const toast = useToast();
   const { state: loading, setState: setLoading } = useBoolean();
 
-  const { data } = useParticipants(ladderId);
+  const { data: participants } = useParticipants(ladder.id);
   const { mutate: register } = useRegisterForLadder();
 
   const userId = client.authStore.model?.id;
   const isRegistered =
     userId &&
-    data?.some((participant) => {
+    participants?.some((participant) => {
       if (userId === participant.primaryPlayer) return true;
       if (userId === participant.secondaryPlayer) return true;
 
@@ -29,7 +33,7 @@ export const RegisterButton = ({ ladderId }: RegisterButtonProps) => {
   const handleRegister = () => {
     setLoading(true);
 
-    register(ladderId, {
+    register(ladder.id, {
       onSuccess: () => {
         toast({ title: 'Registered successfully!' });
       },

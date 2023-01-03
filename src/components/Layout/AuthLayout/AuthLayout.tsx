@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Container } from '@chakra-ui/react';
 import React from 'react';
 
 interface AuthLayoutProps {
@@ -6,5 +6,9 @@ interface AuthLayoutProps {
 }
 
 export const AuthLayout = ({ children }: AuthLayoutProps) => {
-  return <Box>{children}</Box>;
+  return (
+    <Box bgColor="white" height="100%">
+      <Container>{children}</Container>
+    </Box>
+  );
 };

@@ -22,6 +22,6 @@ export const publicRoutes = [
     path: '/ladders/:ladderSlug',
     element: <Navigate to="overview" />,
   },
-  { path: '/ladders/:ladderSlug/:tabSlug', element: <LadderPage /> },
+  { path: '/ladders/:ladderSlug/:tabSlug/*', element: <LadderPage /> },
   { path: '/ladders/create', element: <LadderCreatePage /> },
 ];

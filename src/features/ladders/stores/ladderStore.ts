@@ -1,50 +1,29 @@
-import { produce } from 'immer';
 import create from 'zustand';
-import { persist } from 'zustand/middleware';
-
-import {
-  LadderCreate,
-  LadderType,
-  Ladders,
-} from '@/features/ladders';
-import { uuid } from '@/lib/uuid';
 
 export interface LadderStore {
-  ladders: Ladders;
-  addLadder: (newLadder: LadderCreate) => void;
-  editLadder: (updatedLadder: LadderType) => void;
-  deleteLadder: (ladderToDelete: LadderType) => void;
+  ladderId: string | null;
+  myParticipantId: string | null;
+  myParticipantRank: number | null;
+  acceptDate: string;
+
+  setField: <T extends keyof LadderStore>(
+    field: T,
+    value: LadderStore[T]
+  ) => void;
+  setFields: (newStore: Partial<LadderStore>) => void;
+  reset: () => void;
 }
 
-export const useLadders = create<LadderStore>(
-  persist(
-    (set) => ({
-      ladders: {},
-      addLadder: (newLadder) =>
-        set(
-          produce((state) => {
-            const ladderId = uuid();
-            state.ladders[ladderId] = {
-              ...newLadder,
-              id: ladderId,
-            };
-          })
-        ),
-      editLadder: (updatedLadder) =>
-        set(
-          produce((state) => {
-            state.ladders[updatedLadder.id] = updatedLadder;
-          })
-        ),
-      deleteLadder: (ladder) =>
-        set(
-          produce((state) => {
-            delete state.ladders[ladder.id];
-          })
-        ),
-    }),
-    {
-      name: 'ladders',
-    }
-  )
-);
+const defaultState = {
+  ladderId: null,
+  myParticipantId: null,
+  myParticipantRank: null,
+  acceptDate: '',
+};
+
+export const useLadderStore = create<LadderStore>((set) => ({
+  ...defaultState,
+  setField: (field, value) => set({ [field]: value }),
+  setFields: (newStore) => set(newStore),
+  reset: () => set(defaultState),
+}));

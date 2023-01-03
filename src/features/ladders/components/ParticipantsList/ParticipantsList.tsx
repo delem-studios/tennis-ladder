@@ -1,10 +1,12 @@
+import { EmailIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
-  Card,
-  CardHeader,
+  Divider,
   Flex,
+  HStack,
   Heading,
+  IconButton,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -21,25 +23,31 @@ export const ParticipantsList = ({ ladderId }: ParticipantsListProps) => {
   const { data: participants } = useParticipants(ladderId);
 
   return (
-    <VStack align="flex-start">
+    <VStack align="flex-start" spacing={4} width="100%" divider={<Divider />}>
       {participants?.map((participant) => (
-        <Flex
-          flex="1"
-          gap="4"
-          alignItems="center"
-          flexWrap="wrap"
-          key={participant.id}
-        >
-          <Avatar
-            icon={<AiOutlineUser fontSize="1.5rem" />}
-            name={participant.expand.primaryPlayer.name}
-            src={participant.expand.primaryPlayer.avatar}
-          />
+        <Flex key={participant.id} justify="space-between" width="100%">
+          <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
+            <Avatar
+              icon={<AiOutlineUser fontSize="1.5rem" />}
+              name={participant.expand.primaryPlayer.name}
+              src={participant.expand.primaryPlayer.avatar}
+            />
 
-          <Box>
-            <Heading size="sm">{participant.expand.primaryPlayer.name}</Heading>
-            <Text>{participant.expand.primaryPlayer.email}</Text>
-          </Box>
+            <Box>
+              <Heading size="sm">
+                {participant.expand.primaryPlayer.name}
+              </Heading>
+              <Text>{participant.expand.primaryPlayer.email}</Text>
+            </Box>
+          </Flex>
+          <HStack>
+            <IconButton
+              icon={<EmailIcon />}
+              aria-label={`Email ${participant.expand.primaryPlayer.name}`}
+              variant="ghost"
+              colorScheme="blue"
+            />
+          </HStack>
         </Flex>
       ))}
     </VStack>

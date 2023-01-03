@@ -7,6 +7,8 @@ export interface Ladder extends BaseEntity {
   slug: string;
   description?: string;
 
+  organizers: Array<string>;
+
   inviteUrl?: string;
   isRegistrationOpen?: boolean;
   maxParticipants: number;

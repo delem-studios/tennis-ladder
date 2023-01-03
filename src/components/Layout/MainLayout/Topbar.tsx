@@ -25,7 +25,7 @@ export const Topbar = ({}: TopbarProps) => {
   const user = client.authStore.model;
 
   return (
-    <Box as="section" bgColor="white" position="sticky" top={0}>
+    <Box as="section" bgColor="white" position="sticky" top={0} zIndex={200}>
       <Box
         as="nav"
         bg="bg-surface"

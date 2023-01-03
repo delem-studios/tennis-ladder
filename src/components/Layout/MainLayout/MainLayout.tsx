@@ -10,12 +10,12 @@ export interface MainLayoutProps {
 
 export const MainLayout = ({ container, children }: MainLayoutProps) => {
   return (
-    <Box height="100%" width="100%">
+    <Box height="100%" width="100%" overflowX="hidden">
       <Topbar />
       {container ? (
         <Container
           bgColor="white"
-          height="calc(100% - 64px)"
+          minHeight="calc(100% - 64px)"
           maxW={{
             base: 'container.sm',
             sm: 'container.md',

@@ -69,6 +69,10 @@ export const RegisterForm = ({}: RegisterFormProps) => {
         .collection('users')
         .create({ ...values, passwordConfirm: values.password });
 
+      await client
+        .collection('users')
+        .authWithPassword(values.email, values.password);
+
       toast({ title: "You've successfully created a new account!" });
 
       navigate('/');
