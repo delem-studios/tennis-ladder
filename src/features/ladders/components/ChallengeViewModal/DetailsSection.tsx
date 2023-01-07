@@ -37,29 +37,12 @@ export const DetailsSection = ({
     0;
   const myOpponentRank = myOpponentIndex + 1;
 
+  const isPending = challenge.status === 'pending';
+
   return (
     <Section title="Details">
-      <HStack gap={2}>
-        {challenge.proposedDates.map((date, index) => (
-          <Box
-            key={`date-${index}`}
-            bgColor="gray.100"
-            p={2}
-            borderRadius={4}
-            flex={1}
-          >
-            <Text fontWeight="400" fontSize="sm">
-              Proposed Date {index + 1}
-            </Text>
-            <Text fontWeight="bold" fontSize="lg">
-              {dayjs(date).format('dddd, MMMM D')}
-            </Text>
-            <Text fontWeight="bold" fontSize="lg">
-              {dayjs(date).format('h:mm A')}
-            </Text>
-          </Box>
-        ))}
-      </HStack>
+      {isPending && <ProposedDates challenge={challenge} />}
+
       <Text>Status: {challenge.status}</Text>
       {myParticipantRank !== null && (
         <Box>
@@ -73,5 +56,31 @@ export const DetailsSection = ({
         </Box>
       )}
     </Section>
+  );
+};
+
+const ProposedDates = ({ challenge }: { challenge: ExpandedChallenge }) => {
+  return (
+    <HStack gap={2}>
+      {challenge.proposedDates.map((date, index) => (
+        <Box
+          key={`date-${index}`}
+          bgColor="gray.100"
+          p={2}
+          borderRadius={4}
+          flex={1}
+        >
+          <Text fontWeight="400" fontSize="sm">
+            Proposed Date {index + 1}
+          </Text>
+          <Text fontWeight="bold" fontSize="lg">
+            {dayjs(date).format('dddd, MMMM D')}
+          </Text>
+          <Text fontWeight="bold" fontSize="lg">
+            {dayjs(date).format('h:mm A')}
+          </Text>
+        </Box>
+      ))}
+    </HStack>
   );
 };

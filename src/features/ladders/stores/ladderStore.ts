@@ -5,6 +5,7 @@ export interface LadderStore {
   myParticipantId: string | null;
   myParticipantRank: number | null;
   acceptDate: string;
+  score: Array<Array<string>>;
 
   setField: <T extends keyof LadderStore>(
     field: T,
@@ -19,6 +20,11 @@ const defaultState = {
   myParticipantId: null,
   myParticipantRank: null,
   acceptDate: '',
+  score: [
+    ['', ''],
+    ['', ''],
+    ['', ''],
+  ],
 };
 
 export const useLadderStore = create<LadderStore>((set) => ({

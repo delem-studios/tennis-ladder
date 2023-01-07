@@ -13,6 +13,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
   Challenge,
   useChallengeById,
+  useCreateMatch,
   useDeleteChallenge,
   useLadderStore,
   useUpdateChallenge,
@@ -34,10 +35,11 @@ export const ChallengeViewFooter = ({
   const { data: challenge } = useChallengeById({
     challengeId: searchParams.get('challengeId'),
   });
-  const { acceptDate } = useLadderStore();
+  const { acceptDate, score } = useLadderStore();
   const { state: isLoading, setState: setIsLoading } = useBoolean();
   const { mutate: deleteChallenge } = useDeleteChallenge();
   const { mutate: updateChallenge } = useUpdateChallenge();
+  const { mutate: createMatch } = useCreateMatch();
 
   const handleUpdate = (updateFields: Partial<Challenge>) => {
     if (!challengeId || !challenge) return;
@@ -46,6 +48,25 @@ export const ChallengeViewFooter = ({
 
     updateChallenge(
       { ...challenge, ...updateFields },
+      {
+        onSuccess: () => {},
+        onError: () => {
+          toast({ title: 'Unable to update challenge.', status: 'error' });
+        },
+        onSettled: () => {
+          setIsLoading(false);
+        },
+      }
+    );
+  };
+
+  const handleSubmitMatch = () => {
+    if (!challengeId || !challenge) return;
+
+    setIsLoading(true);
+
+    createMatch(
+      { score },
       {
         onSuccess: () => {},
         onError: () => {
@@ -100,20 +121,33 @@ export const ChallengeViewFooter = ({
         <Button colorScheme="red" variant="ghost" isLoading={isLoading}>
           Decline
         </Button>
-        <Tooltip
-          label={
-            isAccepted ? '' : acceptDate ? '' : 'Please select a date first.'
-          }
-        >
-          <Button
-            colorScheme="blue"
-            isLoading={isLoading}
-            disabled={acceptDate === '' || isAccepted}
-            onClick={() => handleUpdate({ status: 'accepted' })}
+        {isPending && (
+          <Tooltip label={acceptDate ? '' : 'Please select a date first.'}>
+            <Button
+              colorScheme="blue"
+              isLoading={isLoading}
+              disabled={acceptDate === ''}
+              onClick={() => handleUpdate({ status: 'accepted' })}
+            >
+              Accept
+            </Button>
+          </Tooltip>
+        )}
+        {isAccepted && (
+          <Tooltip
+            label={
+              isAccepted ? '' : acceptDate ? '' : 'Please select a date first.'
+            }
           >
-            {isAccepted ? 'Accepted!' : 'Accept'}
-          </Button>
-        </Tooltip>
+            <Button
+              colorScheme="blue"
+              isLoading={isLoading}
+              onClick={() => handleUpdate({ status: 'accepted' })}
+            >
+              Submit
+            </Button>
+          </Tooltip>
+        )}
       </HStack>
     </ModalFooter>
   );

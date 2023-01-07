@@ -6,6 +6,7 @@ import {
   ExpandedLeaderboard,
   Ladder,
   Leaderboard,
+  Match,
   Participant,
   Rules,
 } from '@/features/ladders';
@@ -220,5 +221,44 @@ export const useDeleteChallenge = () => {
         void queryClient.invalidateQueries(['challenges']);
       },
     }
+  );
+};
+
+export const useCreateMatch = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (data: Pick<Match, 'ladder' | 'winner' | 'loser' | 'score'>) =>
+      client.collection('challenges').create(data),
+    {
+      onSuccess: (updatedLeaderboard) => {
+        void queryClient.invalidateQueries([
+          'ladders',
+          updatedLeaderboard.ladder,
+          'matches',
+        ]);
+      },
+    }
+  );
+};
+
+export const useMatches = ({
+  ladderId,
+  page,
+  perPage,
+}: {
+  ladderId: string;
+  page: number;
+  perPage: number;
+}) => {
+  return useQuery(
+    ['ladders', ladderId, 'matches', { page, perPage }],
+    async () =>
+      client
+        .collection('challenges')
+        .getList<ExpandedChallenge>(page, perPage, {
+          filter: `ladder="${ladderId}"`,
+          expand: 'winner,loser,winner.primaryPlayer,loser.primaryPlayer',
+        })
   );
 };

@@ -78,7 +78,7 @@ export const ChallengeViewModal = ({ ladder }: ChallengeViewModalProps) => {
 
           <OpponentDetailsSection opponent={opponent} />
           <ActionsSection challenge={challenge} />
-          <MatchSection />
+          <MatchSection challenge={challenge} />
         </ModalBody>
 
         <ChallengeViewFooter
