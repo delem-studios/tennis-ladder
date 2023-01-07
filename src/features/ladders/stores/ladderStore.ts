@@ -6,6 +6,11 @@ export interface LadderStore {
   myParticipantRank: number | null;
   acceptDate: string;
   score: Array<Array<string>>;
+  challengerSetsWon: number;
+  challengeeSetsWon: number;
+  retired: string | null;
+  winner: string | null;
+  loser: string | null;
 
   setField: <T extends keyof LadderStore>(
     field: T,
@@ -25,6 +30,11 @@ const defaultState = {
     ['', ''],
     ['', ''],
   ],
+  challengerSetsWon: 0,
+  challengeeSetsWon: 0,
+  retired: null,
+  loser: null,
+  winner: null,
 };
 
 export const useLadderStore = create<LadderStore>((set) => ({

@@ -60,24 +60,24 @@ export const ChallengeViewFooter = ({
     );
   };
 
-  const handleSubmitMatch = () => {
-    if (!challengeId || !challenge) return;
-
-    setIsLoading(true);
-
-    createMatch(
-      { score },
-      {
-        onSuccess: () => {},
-        onError: () => {
-          toast({ title: 'Unable to update challenge.', status: 'error' });
-        },
-        onSettled: () => {
-          setIsLoading(false);
-        },
-      }
-    );
-  };
+  // const handleSubmitMatch = () => {
+  //   if (!challengeId || !challenge) return;
+  //
+  //   setIsLoading(true);
+  //
+  //   createMatch(
+  //     { score },
+  //     {
+  //       onSuccess: () => {},
+  //       onError: () => {
+  //         toast({ title: 'Unable to update challenge.', status: 'error' });
+  //       },
+  //       onSettled: () => {
+  //         setIsLoading(false);
+  //       },
+  //     }
+  //   );
+  // };
 
   const handleDelete = () => {
     if (!challengeId) return;
