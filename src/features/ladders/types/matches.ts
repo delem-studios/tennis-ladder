@@ -1,4 +1,4 @@
-import { Participant } from '@/features/ladders';
+import { ExpandedChallenge, ExpandedParticipant } from '@/features/ladders';
 import { BaseEntity, Expand } from '@/types';
 
 export interface Match extends BaseEntity {
@@ -6,12 +6,16 @@ export interface Match extends BaseEntity {
   winner: string;
   loser: string;
   score: Array<Array<string>>;
+  challenge: string;
+  date: string;
+  isForfeit: boolean;
 }
 
 export type ExpandedMatch = Expand<
   Match,
   {
-    winner: Participant;
-    loser: Participant;
+    challenge: ExpandedChallenge;
+    winner: ExpandedParticipant;
+    loser: ExpandedParticipant;
   }
 >;

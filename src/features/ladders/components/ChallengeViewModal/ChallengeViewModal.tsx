@@ -11,7 +11,7 @@ import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import {
-  Ladder,
+  defaultChallengeViewModalState,
   useChallengeById,
   useLadderStore,
   useLeaderboard,
@@ -24,22 +24,22 @@ import { DetailsSection } from './DetailsSection';
 import { MatchSection } from './MatchSection';
 import { OpponentDetailsSection } from './OpponentDetailsSection';
 
-export interface ChallengeViewModalProps {
-  ladder: Ladder;
-}
+export interface ChallengeViewModalProps {}
 
-export const ChallengeViewModal = ({ ladder }: ChallengeViewModalProps) => {
+export const ChallengeViewModal = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
   const challengeId = searchParams.get('challengeId');
   const { data: challenge } = useChallengeById({
     challengeId: searchParams.get('challengeId'),
   });
-  const { myParticipantId } = useLadderStore();
-  const { data: leaderboard } = useLeaderboard(ladder.id);
+  const { ladder, myParticipantId, setFields } = useLadderStore();
+  const { data: leaderboard } = useLeaderboard(ladder?.id);
 
   const handleClose = () => {
-    navigate(`/ladders/${ladder.slug}/my-challenges`);
+    navigate(`/ladders/${ladder?.slug}/my-challenges`);
+    setFields(defaultChallengeViewModalState);
   };
 
   if (!challenge || !leaderboard) return null;
@@ -82,6 +82,7 @@ export const ChallengeViewModal = ({ ladder }: ChallengeViewModalProps) => {
         </ModalBody>
 
         <ChallengeViewFooter
+          ladder={ladder}
           isChallenger={isChallenger}
           handleClose={handleClose}
         />

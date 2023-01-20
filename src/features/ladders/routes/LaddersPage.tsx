@@ -22,9 +22,10 @@ export const LaddersPage = () => {
       cell: (info) => info.getValue(),
       header: 'Description',
     }),
-    columnHelper.accessor('isRegistrationOpen', {
-      cell: (info) => (info.getValue() ? 'Open' : 'Closed'),
-      header: 'Registration',
+    columnHelper.accessor('status', {
+      cell: (info) =>
+        info.getValue().charAt(0).toUpperCase() + info.getValue().slice(1),
+      header: 'Status',
     }),
     columnHelper.display({
       id: 'Actions',

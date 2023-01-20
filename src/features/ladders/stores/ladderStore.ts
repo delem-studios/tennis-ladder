@@ -1,6 +1,9 @@
 import create from 'zustand';
 
+import { ExpandedChallenge, Ladder } from '@/features/ladders';
+
 export interface LadderStore {
+  ladder: Ladder | null;
   ladderId: string | null;
   myParticipantId: string | null;
   myParticipantRank: number | null;
@@ -12,6 +15,12 @@ export interface LadderStore {
   winner: string | null;
   loser: string | null;
 
+  challengeModal: Ladder | null;
+  pendingChallengeModal: {
+    ladder: Ladder;
+    challenge: ExpandedChallenge;
+  } | null;
+
   setField: <T extends keyof LadderStore>(
     field: T,
     value: LadderStore[T]
@@ -20,11 +29,7 @@ export interface LadderStore {
   reset: () => void;
 }
 
-const defaultState = {
-  ladderId: null,
-  myParticipantId: null,
-  myParticipantRank: null,
-  acceptDate: '',
+export const defaultChallengeViewModalState = {
   score: [
     ['', ''],
     ['', ''],
@@ -35,6 +40,17 @@ const defaultState = {
   retired: null,
   loser: null,
   winner: null,
+};
+
+const defaultState = {
+  ...defaultChallengeViewModalState,
+  ladder: null,
+  ladderId: null,
+  myParticipantId: null,
+  myParticipantRank: null,
+  acceptDate: '',
+  challengeModal: null,
+  pendingChallengeModal: null,
 };
 
 export const useLadderStore = create<LadderStore>((set) => ({

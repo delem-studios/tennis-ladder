@@ -8,10 +8,11 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import {
   Challenge,
+  Ladder,
   useChallengeById,
   useCreateMatch,
   useDeleteChallenge,
@@ -23,19 +24,22 @@ import { useBoolean, useToast } from '@/hooks';
 interface ChallengeViewFooterProps {
   isChallenger: boolean;
   handleClose: () => void;
+  ladder?: Ladder | null;
 }
 
 export const ChallengeViewFooter = ({
   isChallenger,
   handleClose,
+  ladder,
 }: ChallengeViewFooterProps) => {
+  const navigate = useNavigate();
   const toast = useToast();
   const [searchParams] = useSearchParams();
   const challengeId = searchParams.get('challengeId');
   const { data: challenge } = useChallengeById({
     challengeId: searchParams.get('challengeId'),
   });
-  const { acceptDate, score } = useLadderStore();
+  const { acceptDate, score, winner, loser, retired } = useLadderStore();
   const { state: isLoading, setState: setIsLoading } = useBoolean();
   const { mutate: deleteChallenge } = useDeleteChallenge();
   const { mutate: updateChallenge } = useUpdateChallenge();
@@ -49,7 +53,9 @@ export const ChallengeViewFooter = ({
     updateChallenge(
       { ...challenge, ...updateFields },
       {
-        onSuccess: () => {},
+        onSuccess: () => {
+          toast({ title: 'Challenge updated!' });
+        },
         onError: () => {
           toast({ title: 'Unable to update challenge.', status: 'error' });
         },
@@ -60,24 +66,44 @@ export const ChallengeViewFooter = ({
     );
   };
 
-  // const handleSubmitMatch = () => {
-  //   if (!challengeId || !challenge) return;
-  //
-  //   setIsLoading(true);
-  //
-  //   createMatch(
-  //     { score },
-  //     {
-  //       onSuccess: () => {},
-  //       onError: () => {
-  //         toast({ title: 'Unable to update challenge.', status: 'error' });
-  //       },
-  //       onSettled: () => {
-  //         setIsLoading(false);
-  //       },
-  //     }
-  //   );
-  // };
+  const handleSubmitMatch = () => {
+    if (!challengeId || !challenge || !winner || !loser || !ladder) return;
+
+    setIsLoading(true);
+
+    const didChallengerWin = winner === challenge.challenger;
+
+    let submitScore: Array<Array<string>>;
+    if (!didChallengerWin) {
+      submitScore = score.map((set) => [set[1], set[0]]);
+    } else {
+      submitScore = score;
+    }
+
+    createMatch(
+      {
+        score: submitScore,
+        winner,
+        loser,
+        ladder: ladder.id,
+        challenge: challenge.id,
+        date: challenge.acceptedDate,
+        isForfeit: Boolean(retired),
+      },
+      {
+        onSuccess: () => {
+          navigate(`/ladders/${ladder.slug}/my-challenges`);
+          toast({ title: 'Match submitted. Thank you!' });
+        },
+        onError: () => {
+          toast({ title: 'Unable to submit scores.', status: 'error' });
+        },
+        onSettled: () => {
+          setIsLoading(false);
+        },
+      }
+    );
+  };
 
   const handleDelete = () => {
     if (!challengeId) return;
@@ -127,7 +153,9 @@ export const ChallengeViewFooter = ({
               colorScheme="blue"
               isLoading={isLoading}
               disabled={acceptDate === ''}
-              onClick={() => handleUpdate({ status: 'accepted' })}
+              onClick={() =>
+                handleUpdate({ status: 'accepted', acceptedDate: acceptDate })
+              }
             >
               Accept
             </Button>
@@ -142,7 +170,7 @@ export const ChallengeViewFooter = ({
             <Button
               colorScheme="blue"
               isLoading={isLoading}
-              onClick={() => handleUpdate({ status: 'accepted' })}
+              onClick={handleSubmitMatch}
             >
               Submit
             </Button>

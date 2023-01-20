@@ -22,14 +22,14 @@ import {
   Ladder,
   LadderDetails,
   LadderMatches,
+  LadderParticipants,
   LadderSettings,
   LeaderboardView,
   MyChallenges,
-  ParticipantsList,
   RegisterButton,
+  useLadderStore,
   useLeaderboard,
 } from '@/features/ladders';
-import { useLadderStore } from '@/features/ladders';
 import { client } from '@/libs/client';
 
 export interface LadderBySlugProps {
@@ -97,7 +97,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
     {
       name: 'Participants',
       slug: 'participants',
-      Component: <ParticipantsList ladderId={ladder.id} />,
+      Component: <LadderParticipants ladder={ladder} />,
       visible: true,
     },
     {
@@ -121,7 +121,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
         <Heading alignItems="center" mr={4}>
           {ladder.name}
         </Heading>
-        {ladder.isRegistrationOpen && <RegisterButton ladder={ladder} />}
+        {ladder.status === 'registration' && <RegisterButton ladder={ladder} />}
       </Flex>
       <StatGroup>
         <Stat>
@@ -143,9 +143,20 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
           </StatNumber>
         </Stat>
         <Stat>
-          <StatLabel>Registration</StatLabel>
-          <Badge colorScheme={ladder.isRegistrationOpen ? 'green' : 'gray'}>
-            {ladder.isRegistrationOpen ? 'Open' : 'Closed'}
+          <StatLabel>Status</StatLabel>
+          <Badge
+            colorScheme={
+              ladder.status === 'registration'
+                ? 'green'
+                : ladder.status === 'running'
+                ? 'blue'
+                : 'gray'
+            }
+            textTransform="uppercase"
+          >
+            {ladder.status === 'registration'
+              ? 'Registration Open'
+              : ladder.status}
           </Badge>
         </Stat>
       </StatGroup>

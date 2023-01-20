@@ -26,6 +26,7 @@ import {
   ChallengeModal,
   ExpandedParticipant,
   Ladder,
+  LadderTabContainer,
   Participant,
   useLadderStore,
   useLeaderboard,
@@ -247,7 +248,7 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
           ))}
         </Thead>
         <Tbody>
-          {table.getRowModel().rows.map((row, index) => (
+          {table.getRowModel().rows.map((row) => (
             <Tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
@@ -268,32 +269,38 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
   if (!leaderboard) return null;
 
   return (
-    <Box>
-      {isAdmin && (
-        <Flex mb={4}>
-          <Button onClick={handleEdit} colorScheme="blue" isLoading={isLoading}>
-            {isEditing ? 'Confirm Changes' : 'Edit Rankings'}
-          </Button>
-          {isEditing && (
-            <Button onClick={handleCancel} isLoading={isLoading}>
-              Cancel
+    <LadderTabContainer title="Ladder">
+      <Box>
+        {isAdmin && (
+          <Flex mb={4}>
+            <Button
+              onClick={handleEdit}
+              colorScheme="blue"
+              isLoading={isLoading}
+            >
+              {isEditing ? 'Confirm Changes' : 'Edit Rankings'}
             </Button>
-          )}
-        </Flex>
-      )}
-      <DataTable
-        columns={columns}
-        data={isEditing ? proposed : leaderboard.expand.leaderboard}
-        size="sm"
-        sx={{
-          'td:nth-child(1)': {
-            width: '1px',
-          },
-          'td:last-child': {
-            width: '1px',
-          },
-        }}
-      />
-    </Box>
+            {isEditing && (
+              <Button onClick={handleCancel} isLoading={isLoading}>
+                Cancel
+              </Button>
+            )}
+          </Flex>
+        )}
+        <DataTable
+          columns={columns}
+          data={isEditing ? proposed : leaderboard.expand.leaderboard}
+          size="sm"
+          sx={{
+            'td:nth-child(1)': {
+              width: '1px',
+            },
+            'td:last-child': {
+              width: '1px',
+            },
+          }}
+        />
+      </Box>
+    </LadderTabContainer>
   );
 };

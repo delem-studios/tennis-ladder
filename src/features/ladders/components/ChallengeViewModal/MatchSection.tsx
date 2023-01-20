@@ -65,8 +65,10 @@ export const MatchSection = ({ challenge }: MatchSectionProps) => {
     const isSetCountEqual = challengerSetsWon === challengeeSetsWon;
 
     if (retired) {
-      const winner = retired === 'challenger' ? challengee.id : challenger.id;
-      const loser = retired === 'challengee' ? challenger.id : challengee.id;
+      const didChallengerWin = retired === 'challengee';
+
+      const winner = didChallengerWin ? challenger.id : challengee.id;
+      const loser = didChallengerWin ? challengee.id : challenger.id;
 
       return setFields({ challengerSetsWon, challengeeSetsWon, winner, loser });
     }
@@ -86,6 +88,8 @@ export const MatchSection = ({ challenge }: MatchSectionProps) => {
       setFields({ challengerSetsWon, challengeeSetsWon, winner, loser });
     }
   }, [score, retired]);
+
+  if (challenge.status !== 'accepted') return null;
 
   return (
     <Section title="Submit Match Results">

@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Loading, MainLayout } from '@/components';
-import { LadderBySlug, useLadderBySlug } from '@/features/ladders';
+import {
+  LadderBySlug,
+  useLadderBySlug,
+  useLadderStore,
+} from '@/features/ladders';
 
 interface LadderPageProps {}
 
 export const LadderPage = ({}: LadderPageProps) => {
   const { ladderSlug } = useParams();
   const { data: ladder } = useLadderBySlug(ladderSlug as string);
+  const { setField } = useLadderStore();
+
+  useEffect(() => {
+    if (ladder) {
+      setField('ladder', ladder);
+    }
+
+    return () => {
+      setField('ladder', null);
+    };
+  }, [ladder]);
 
   return (
     <MainLayout container>

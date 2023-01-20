@@ -38,10 +38,12 @@ export const DetailsSection = ({
   const myOpponentRank = myOpponentIndex + 1;
 
   const isPending = challenge.status === 'pending';
+  const isAccepted = challenge.status === 'accepted';
 
   return (
     <Section title="Details">
       {isPending && <ProposedDates challenge={challenge} />}
+      {isAccepted && <AcceptedDate challenge={challenge} />}
 
       <Text>Status: {challenge.status}</Text>
       {myParticipantRank !== null && (
@@ -81,6 +83,25 @@ const ProposedDates = ({ challenge }: { challenge: ExpandedChallenge }) => {
           </Text>
         </Box>
       ))}
+    </HStack>
+  );
+};
+
+const AcceptedDate = ({ challenge }: { challenge: ExpandedChallenge }) => {
+  return (
+    <HStack gap={2}>
+      <Box bgColor="gray.100" p={2} borderRadius={4} flex={1}>
+        <Text fontWeight="400" fontSize="sm">
+          Match Date
+        </Text>
+        <Text fontWeight="bold" fontSize="lg">
+          {dayjs(challenge.acceptedDate).format('dddd, MMMM D')}
+        </Text>
+        <Text fontWeight="bold" fontSize="lg">
+          {dayjs(challenge.acceptedDate).format('h:mm A')}
+        </Text>
+      </Box>
+      <Box flex={1} />
     </HStack>
   );
 };

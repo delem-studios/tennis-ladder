@@ -10,6 +10,7 @@ export interface Challenge extends BaseEntity {
   match: Match;
   thread: string;
   proposedDates: Array<string>;
+  acceptedDate: string;
 }
 
 export type ExpandedChallenge = Expand<

@@ -3,8 +3,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
 import { DataTable, Loading } from '@/components';
-import { Ladder, useChallenges } from '@/features/ladders';
-import { ExpandedChallenge } from '@/features/ladders/types/challenges';
+import { ExpandedChallenge, Ladder, useChallenges } from '@/features/ladders';
 
 const columnHelper = createColumnHelper<ExpandedChallenge>();
 

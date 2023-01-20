@@ -5,6 +5,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { theme } from '@/config';
 
+import { ModalsProvider } from './ModalsProvider';
+
 interface ProvidersProps {
   children: React.ReactNode;
 }
@@ -15,7 +17,10 @@ export const Providers = ({ children }: ProvidersProps) => {
   return (
     <QueryClientProvider client={client}>
       <ChakraProvider theme={theme}>
-        <BrowserRouter>{children}</BrowserRouter>
+        <BrowserRouter>
+          <ModalsProvider />
+          {children}
+        </BrowserRouter>
       </ChakraProvider>
     </QueryClientProvider>
   );

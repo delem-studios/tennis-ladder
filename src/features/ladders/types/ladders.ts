@@ -13,6 +13,7 @@ export interface Ladder extends BaseEntity {
   isRegistrationOpen?: boolean;
   maxParticipants: number;
   isStarted?: boolean;
+  status: LadderStatus;
 
   startDate: string;
   endDate: string;
@@ -20,3 +21,5 @@ export interface Ladder extends BaseEntity {
   format: 'singles' | 'doubles';
   organization?: Organization;
 }
+
+export type LadderStatus = 'draft' | 'registration' | 'running' | 'completed';

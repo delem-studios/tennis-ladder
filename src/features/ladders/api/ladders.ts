@@ -4,6 +4,7 @@ import {
   Challenge,
   ExpandedChallenge,
   ExpandedLeaderboard,
+  ExpandedMatch,
   Ladder,
   Leaderboard,
   Match,
@@ -19,9 +20,14 @@ export const useMyLadders = () => {
   );
 };
 
-export const useLadderBySlug = (slug: string) => {
-  return useQuery(['ladders', slug], async () =>
-    client.collection('ladders').getFirstListItem<Ladder>(`slug="${slug}"`)
+export const useLadderBySlug = (slug?: string) => {
+  return useQuery(
+    ['ladders', slug],
+    async () =>
+      client.collection('ladders').getFirstListItem<Ladder>(`slug="${slug}"`),
+    {
+      enabled: Boolean(slug),
+    }
   );
 };
 
@@ -86,7 +92,7 @@ export const useRules = (ladderId: string) => {
   );
 };
 
-export const useLeaderboard = (ladderId: string) => {
+export const useLeaderboard = (ladderId?: string) => {
   return useQuery(['ladders', ladderId, 'leaderboard'], async () =>
     client
       .collection('leaderboards')
@@ -228,14 +234,23 @@ export const useCreateMatch = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (data: Pick<Match, 'ladder' | 'winner' | 'loser' | 'score'>) =>
-      client.collection('challenges').create(data),
+    async (
+      data: Pick<
+        Match,
+        | 'ladder'
+        | 'winner'
+        | 'loser'
+        | 'score'
+        | 'challenge'
+        | 'date'
+        | 'isForfeit'
+      >
+    ) => client.collection('matches').create(data),
     {
       onSuccess: (updatedLeaderboard) => {
         void queryClient.invalidateQueries([
           'ladders',
           updatedLeaderboard.ladder,
-          'matches',
         ]);
       },
     }
@@ -247,18 +262,20 @@ export const useMatches = ({
   page,
   perPage,
 }: {
-  ladderId: string;
+  ladderId?: string;
   page: number;
   perPage: number;
 }) => {
   return useQuery(
     ['ladders', ladderId, 'matches', { page, perPage }],
     async () =>
-      client
-        .collection('challenges')
-        .getList<ExpandedChallenge>(page, perPage, {
-          filter: `ladder="${ladderId}"`,
-          expand: 'winner,loser,winner.primaryPlayer,loser.primaryPlayer',
-        })
+      client.collection('matches').getList<ExpandedMatch>(page, perPage, {
+        filter: `ladder="${ladderId}"`,
+        expand:
+          'winner,loser,winner.primaryPlayer,loser.primaryPlayer,challenge',
+      }),
+    {
+      enabled: Boolean(ladderId),
+    }
   );
 };
