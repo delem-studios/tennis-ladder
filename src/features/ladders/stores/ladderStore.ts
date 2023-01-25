@@ -15,6 +15,8 @@ export interface LadderStore {
   winner: string | null;
   loser: string | null;
 
+  isParticipating: boolean;
+
   challengeModal: Ladder | null;
   pendingChallengeModal: {
     ladder: Ladder;
@@ -49,6 +51,9 @@ const defaultState = {
   myParticipantId: null,
   myParticipantRank: null,
   acceptDate: '',
+
+  isParticipating: false,
+
   challengeModal: null,
   pendingChallengeModal: null,
 };

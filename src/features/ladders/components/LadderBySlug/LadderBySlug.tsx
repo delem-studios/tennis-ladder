@@ -44,7 +44,10 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
     ladder.id
   );
 
-  const { ladderId, setFields } = useLadderStore((state) => state, shallow);
+  const { ladderId, setFields, isParticipating } = useLadderStore(
+    (state) => state,
+    shallow
+  );
 
   const userId = client.authStore.model?.id;
   const isAdmin = Boolean(
@@ -56,6 +59,16 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
 
     if (ladderId !== ladder.id) {
       const myId = client.authStore.model?.id;
+      const isParticipating = Boolean(
+        leaderboard?.expand.leaderboard &&
+          leaderboard?.expand.leaderboard.length &&
+          leaderboard?.expand.leaderboard.some(
+            (participant) =>
+              participant.primaryPlayer === myId ||
+              participant.secondaryPlayer === myId
+          )
+      );
+
       const myTeamIndex =
         (leaderboard?.expand.leaderboard &&
           leaderboard?.expand.leaderboard.length &&
@@ -64,13 +77,14 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
               participant.primaryPlayer === myId ||
               participant.secondaryPlayer === myId
           )) ||
-        0;
+        -1;
       const myTeamId = leaderboard?.leaderboard[myTeamIndex];
 
       setFields({
         ladderId,
         myParticipantId: myTeamId,
         myParticipantRank: myTeamIndex + 1,
+        isParticipating,
       });
     }
   }, [ladder.id, leaderboard]);
@@ -86,7 +100,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
       name: 'My Challenges',
       slug: 'my-challenges',
       Component: <MyChallenges ladder={ladder} />,
-      visible: true,
+      visible: isParticipating,
     },
     {
       name: 'Matches',

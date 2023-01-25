@@ -34,6 +34,7 @@ export const ParticipantsList = ({ ladderId }: ParticipantsListProps) => {
 
   return (
     <VStack align="flex-start" spacing={4} width="100%" divider={<Divider />}>
+      {participants?.length === 0 && <Text>No participants yet.</Text>}
       {participants?.map((participant) => (
         <Flex key={participant.id} justify="space-between" width="100%">
           <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">

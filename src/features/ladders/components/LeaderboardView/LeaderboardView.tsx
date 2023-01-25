@@ -164,7 +164,7 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
 
         return (
           <HStack justify="flex-end">
-            {alreadyChallenged && (
+            {alreadyChallenged && !isEditing && (
               <Button size="sm" leftIcon={<StarIcon />} disabled={true}>
                 Challenged!
               </Button>
