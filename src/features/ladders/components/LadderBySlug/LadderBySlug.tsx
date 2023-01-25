@@ -117,49 +117,53 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
 
   return (
     <Box>
-      <Flex justify="space-between" py={6}>
-        <Heading alignItems="center" mr={4}>
-          {ladder.name}
-        </Heading>
-        {ladder.status === 'registration' && <RegisterButton ladder={ladder} />}
-      </Flex>
-      <StatGroup>
-        <Stat>
-          <StatLabel>Start Date</StatLabel>
-          <StatNumber fontSize="md">
-            {dayjs(ladder.startDate).format('MMMM D, YYYY h:mm A')}
-          </StatNumber>
-        </Stat>
-        <Stat>
-          <StatLabel>End Date</StatLabel>
-          <StatNumber fontSize="md">
-            {dayjs(ladder.endDate).format('MMMM D, YYYY h:mm A')}
-          </StatNumber>
-        </Stat>
-        <Stat>
-          <StatLabel>Format</StatLabel>
-          <StatNumber fontSize="md" textTransform="capitalize">
-            {ladder.format}
-          </StatNumber>
-        </Stat>
-        <Stat>
-          <StatLabel>Status</StatLabel>
-          <Badge
-            colorScheme={
-              ladder.status === 'registration'
-                ? 'green'
-                : ladder.status === 'running'
-                ? 'blue'
-                : 'gray'
-            }
-            textTransform="uppercase"
-          >
-            {ladder.status === 'registration'
-              ? 'Registration Open'
-              : ladder.status}
-          </Badge>
-        </Stat>
-      </StatGroup>
+      <Box px={4}>
+        <Flex justify="space-between" py={6}>
+          <Heading alignItems="center" mr={4}>
+            {ladder.name}
+          </Heading>
+          {ladder.status === 'registration' && (
+            <RegisterButton ladder={ladder} />
+          )}
+        </Flex>
+        <StatGroup gap={4}>
+          <Stat>
+            <StatLabel>Start Date</StatLabel>
+            <StatNumber fontSize="md">
+              {dayjs(ladder.startDate).format('MMMM D, YYYY h:mm A')}
+            </StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>End Date</StatLabel>
+            <StatNumber fontSize="md">
+              {dayjs(ladder.endDate).format('MMMM D, YYYY h:mm A')}
+            </StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Format</StatLabel>
+            <StatNumber fontSize="md" textTransform="capitalize">
+              {ladder.format}
+            </StatNumber>
+          </Stat>
+          <Stat>
+            <StatLabel>Status</StatLabel>
+            <Badge
+              colorScheme={
+                ladder.status === 'registration'
+                  ? 'green'
+                  : ladder.status === 'running'
+                  ? 'blue'
+                  : 'gray'
+              }
+              textTransform="uppercase"
+            >
+              {ladder.status === 'registration'
+                ? 'Registration Open'
+                : ladder.status}
+            </Badge>
+          </Stat>
+        </StatGroup>
+      </Box>
       <Tabs
         variant="soft-rounded"
         index={tabIndex}
@@ -169,7 +173,12 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
           navigate(`/ladders/${ladder.slug}/${tabs[tabIndex].slug}`);
         }}
       >
-        <TabList justifyContent="flex-start">
+        <TabList
+          justifyContent="flex-start"
+          maxWidth="100%"
+          overflowX="auto"
+          py={2}
+        >
           {tabs.map((tab) => {
             if (!tab.visible) return null;
 

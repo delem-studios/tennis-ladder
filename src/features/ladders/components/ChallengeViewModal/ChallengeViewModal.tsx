@@ -77,7 +77,7 @@ export const ChallengeViewModal = () => {
           {/*</Section>*/}
 
           <OpponentDetailsSection opponent={opponent} />
-          <ActionsSection challenge={challenge} />
+          <ActionsSection challenge={challenge} isChallenger={isChallenger} />
           <MatchSection challenge={challenge} />
         </ModalBody>
 

@@ -11,13 +11,16 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AlertConfirmDialog } from '@/components';
+import { AlertConfirmDialog, Loading } from '@/components';
 import {
   Ladder,
   LadderStatus,
   LadderTabContainer,
+  Rules,
   useDeleteLadder,
+  useRules,
   useUpdateLadder,
+  useUpdateRules,
 } from '@/features/ladders';
 import { useBoolean, useToast } from '@/hooks';
 
@@ -51,8 +54,10 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
   const navigate = useNavigate();
   const toast = useToast();
   const { state: loading, setState: setLoading } = useBoolean();
+  const { data: rules, isLoading: isRulesLoading } = useRules(ladder.id);
   const { mutate: updateLadder } = useUpdateLadder();
   const { mutate: deleteLadder } = useDeleteLadder();
+  const { mutate: updateRules } = useUpdateRules();
 
   const handleUpdate = (partialUpdate: Partial<Ladder>) => {
     setLoading(true);
@@ -87,6 +92,26 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
     });
   };
 
+  const handleUpdateRules = (partialUpdate: Partial<Rules>) => {
+    if (!rules) return;
+
+    setLoading(true);
+
+    updateRules(
+      { ...rules, ...partialUpdate },
+      {
+        onError: () => {
+          toast({ title: 'Unable to update rules.', status: 'error' });
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      }
+    );
+  };
+
+  if (isRulesLoading) return <Loading />;
+
   return (
     <Container>
       <LadderTabContainer title="Settings">
@@ -108,6 +133,7 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
               onChange={(e) =>
                 handleUpdate({ status: e.target.value as LadderStatus })
               }
+              value={ladder.status}
             >
               <option value="draft">Draft</option>
               <option value="registration">Registration</option>
@@ -134,6 +160,54 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
               min={dayjs(ladder.startDate).format('YYYY-MM-DDThh:mm')}
               onBlur={(e) => {
                 handleUpdate({ endDate: dayjs(e.target.value).format() });
+              }}
+              isDisabled={loading}
+            />
+          </SettingsItem>
+          <SettingsItem
+            title="Challenge Range"
+            help="The rank differential limit players can challenge."
+          >
+            <Input
+              type="number"
+              defaultValue={rules?.challengeRange}
+              min={1}
+              onBlur={(e) => {
+                const newRange = parseInt(e.target.value);
+                if (newRange < 1) return;
+                handleUpdateRules({ challengeRange: newRange });
+              }}
+              isDisabled={loading}
+            />
+          </SettingsItem>
+          <SettingsItem
+            title="Outbound Challenge Limit"
+            help="The number of outgoing challenges a participant may have at a given time."
+          >
+            <Input
+              type="number"
+              defaultValue={rules?.outboundChallengeLimit}
+              min={1}
+              onBlur={(e) => {
+                const newValue = parseInt(e.target.value);
+                if (newValue < 1) return;
+                handleUpdateRules({ outboundChallengeLimit: newValue });
+              }}
+              isDisabled={loading}
+            />
+          </SettingsItem>
+          <SettingsItem
+            title="Inbound Challenge Limit"
+            help="The number of incoming challenges a participant may have at a given time."
+          >
+            <Input
+              type="number"
+              defaultValue={rules?.inboundChallengeLimit}
+              min={1}
+              onBlur={(e) => {
+                const newValue = parseInt(e.target.value);
+                if (newValue < 1) return;
+                handleUpdateRules({ inboundChallengeLimit: newValue });
               }}
               isDisabled={loading}
             />

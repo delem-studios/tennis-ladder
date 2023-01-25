@@ -26,7 +26,7 @@ export const LadderMatches = ({ ladder }: LadderMatchesProps) => {
 
   const columns = [
     columnHelper.accessor('date', {
-      cell: (info) => dayjs(info.getValue()).format(),
+      cell: (info) => dayjs(info.getValue()).format('MMMM D, YYYY h:mm A'),
       header: 'Date',
     }),
     columnHelper.accessor('expand.winner.expand.primaryPlayer.name', {

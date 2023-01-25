@@ -92,6 +92,24 @@ export const useRules = (ladderId: string) => {
   );
 };
 
+export const useUpdateRules = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    async (updatedRules: Rules) =>
+      client.collection('rules').update(updatedRules.id, updatedRules),
+    {
+      onSuccess: (updatedLeaderboard) => {
+        void queryClient.invalidateQueries([
+          'ladders',
+          updatedLeaderboard.ladder,
+          'rules',
+        ]);
+      },
+    }
+  );
+};
+
 export const useLeaderboard = (ladderId?: string) => {
   return useQuery(['ladders', ladderId, 'leaderboard'], async () =>
     client

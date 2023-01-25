@@ -144,10 +144,12 @@ export const ChallengeViewFooter = ({
         </Flex>
       )}
       <HStack>
-        <Button colorScheme="red" variant="ghost" isLoading={isLoading}>
-          Decline
-        </Button>
-        {isPending && (
+        {isPending && !isChallenger && (
+          <Button colorScheme="red" variant="ghost" isLoading={isLoading}>
+            Decline
+          </Button>
+        )}
+        {isPending && !isChallenger && (
           <Tooltip label={acceptDate ? '' : 'Please select a date first.'}>
             <Button
               colorScheme="blue"
@@ -163,14 +165,13 @@ export const ChallengeViewFooter = ({
         )}
         {isAccepted && (
           <Tooltip
-            label={
-              isAccepted ? '' : acceptDate ? '' : 'Please select a date first.'
-            }
+            label={!winner || !loser ? 'Please record the scores first.' : ''}
           >
             <Button
               colorScheme="blue"
               isLoading={isLoading}
               onClick={handleSubmitMatch}
+              disabled={!winner || !loser}
             >
               Submit
             </Button>

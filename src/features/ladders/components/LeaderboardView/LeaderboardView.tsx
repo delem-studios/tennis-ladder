@@ -1,4 +1,9 @@
-import { ArrowDownIcon, ArrowUpIcon, DragHandleIcon } from '@chakra-ui/icons';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  DragHandleIcon,
+  StarIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -6,9 +11,9 @@ import {
   TableProps as ChakraTableProps,
   Flex,
   HStack,
-  Highlight,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -34,6 +39,7 @@ import {
   useRules,
   useUpdateLeaderboard,
 } from '@/features/ladders';
+import { hasOutboundChallengesRemaining } from '@/features/ladders/utils/rules';
 import { useBoolean, useToast } from '@/hooks';
 import { Expand, User } from '@/types';
 
@@ -108,10 +114,10 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
           typeof myParticipantRank === 'number' &&
           info.row.index === myParticipantRank - 1;
 
-        return (
-          <Highlight query={isMe ? info.getValue() : ''}>
-            {info.getValue()}
-          </Highlight>
+        return isMe ? (
+          <Text fontWeight="bold">{info.getValue()}</Text>
+        ) : (
+          info.getValue()
         );
       },
       header: 'Name',
@@ -127,7 +133,10 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
     columnHelper.display({
       header: 'Actions',
       cell: (info) => {
+        if (!rules || !myChallenges || !myParticipantId) return;
+
         const rowRank = info.row.index + 1;
+
         const isMe =
           typeof myParticipantRank === 'number' &&
           info.row.index === myParticipantRank - 1;
@@ -136,18 +145,41 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
           Math.abs(rowRank - myParticipantRank);
         const permittedRange = rules?.challengeRange || 3;
         const isWithinRange = rankDiff <= permittedRange;
-        const alreadyChallenged = myChallenges?.some(
-          (challenge) =>
-            challenge.challenger === info.row.original.id ||
-            challenge.challengee === info.row.original.id
+        const alreadyChallenged =
+          !isMe &&
+          myChallenges?.some(
+            (challenge) =>
+              challenge.challenger === info.row.original.id ||
+              challenge.challengee === info.row.original.id
+          );
+        const isOutboundChallengesRemaining = hasOutboundChallengesRemaining(
+          rules,
+          myChallenges,
+          myParticipantId
         );
 
-        const canChallenge = !isMe && isWithinRange && !alreadyChallenged;
+        const canChallenge =
+          myParticipantId && !isMe && isWithinRange && !alreadyChallenged;
+        const isLadderRunning = ladder.status === 'running';
 
         return (
           <HStack justify="flex-end">
-            {canChallenge && !isEditing && (
-              <ChallengeModal ladder={ladder} participant={info.row.original} />
+            {alreadyChallenged && (
+              <Button size="sm" leftIcon={<StarIcon />} disabled={true}>
+                Challenged!
+              </Button>
+            )}
+            {isLadderRunning && canChallenge && !isEditing && (
+              <ChallengeModal
+                ladder={ladder}
+                participant={info.row.original}
+                disabled={!isOutboundChallengesRemaining}
+                tooltip={
+                  !isOutboundChallengesRemaining
+                    ? 'No more outbound challenges remaining.'
+                    : ''
+                }
+              />
             )}
             {isAdmin && isEditing && (
               <Button size="sm" leftIcon={<ArrowUpIcon />}>

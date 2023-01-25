@@ -91,8 +91,6 @@ export const LadderForm = ({}: LadderFormProps) => {
   } = methods;
 
   const onSubmit: SubmitHandler<LadderFormFields> = async (values) => {
-    console.log('Values:', values);
-
     try {
       const slug = values.name
         .toLowerCase()

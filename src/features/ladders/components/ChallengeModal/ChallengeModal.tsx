@@ -1,6 +1,7 @@
 import { StarIcon } from '@chakra-ui/icons';
 import {
   Button,
+  ButtonProps,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -13,6 +14,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Tooltip,
   VStack,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -50,14 +52,17 @@ interface ChallengeFormFields {
   proposedDates: Array<{ value: string }>;
 }
 
-export interface ChallengeModalProps {
+export interface ChallengeModalProps extends ButtonProps {
   ladder: Ladder;
   participant: ExpandedParticipant;
+  tooltip?: string;
 }
 
 export const ChallengeModal = ({
   ladder,
   participant,
+  tooltip,
+  ...rest
 }: ChallengeModalProps) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -82,7 +87,6 @@ export const ChallengeModal = ({
   });
 
   const onSubmit = (values: ChallengeFormFields) => {
-    console.log('values:', values);
     if (!myParticipantId) return;
 
     setIsLoading(true);
@@ -114,9 +118,17 @@ export const ChallengeModal = ({
 
   return (
     <>
-      <Button size="sm" leftIcon={<StarIcon />} onClick={onOpen}>
-        Challenge
-      </Button>
+      {tooltip ? (
+        <Tooltip label={tooltip}>
+          <Button size="sm" leftIcon={<StarIcon />} onClick={onOpen} {...rest}>
+            Challenge
+          </Button>
+        </Tooltip>
+      ) : (
+        <Button size="sm" leftIcon={<StarIcon />} onClick={onOpen} {...rest}>
+          Challenge
+        </Button>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
