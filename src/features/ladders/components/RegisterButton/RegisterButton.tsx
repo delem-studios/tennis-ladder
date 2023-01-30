@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import React from 'react';
 
 import { useBoolean, useToast } from '@/hooks';
@@ -49,8 +49,7 @@ export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
       onClick={handleRegister}
       isLoading={loading}
       disabled={Boolean(isRegistered)}
-    >
-      {isRegistered ? 'Registered!' : 'Register'}
+    >{isRegistered ? 'Registered!' : 'Register'}
     </Button>
   );
 };
