@@ -2,7 +2,8 @@ import { Heading } from '@chakra-ui/react';
 import React from 'react';
 
 import { AuthLayout } from '@/components';
-import { LoginForm } from '@/features/miscellaneous';
+
+import { LoginForm } from '../components';
 
 export interface LoginPageProps {}
 

@@ -12,17 +12,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AlertConfirmDialog, Loading } from '@/components';
+import { useBoolean, useToast } from '@/hooks';
+
+import { LadderTabContainer } from '../';
 import {
-  Ladder,
-  LadderStatus,
-  LadderTabContainer,
-  Rules,
   useDeleteLadder,
   useRules,
   useUpdateLadder,
   useUpdateRules,
-} from '@/features/ladders';
-import { useBoolean, useToast } from '@/hooks';
+} from '../../api';
+import { Ladder, LadderStatus, Rules } from '../../types';
 
 const SettingsItem = ({
   title,

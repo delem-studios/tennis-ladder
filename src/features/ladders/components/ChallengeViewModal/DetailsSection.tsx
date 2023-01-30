@@ -2,12 +2,8 @@ import { Box, HStack, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 
-import {
-  ExpandedChallenge,
-  ExpandedLeaderboard,
-  useLadderStore,
-} from '@/features/ladders';
-
+import { useLadderStore } from '../../stores';
+import { ExpandedChallenge, ExpandedLeaderboard } from '../../types';
 import { Section } from './Section';
 
 interface DetailsSectionProps {

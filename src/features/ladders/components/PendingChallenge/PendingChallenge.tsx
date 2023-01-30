@@ -13,8 +13,9 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 
-import { ExpandedChallenge, Ladder } from '@/features/ladders';
 import { client } from '@/libs';
+
+import { ExpandedChallenge, Ladder } from '../../types';
 
 export interface PendingChallengeProps {
   ladder: Ladder;

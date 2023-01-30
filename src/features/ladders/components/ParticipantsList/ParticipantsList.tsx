@@ -13,7 +13,7 @@ import {
 import React from 'react';
 import { AiOutlineUser } from 'react-icons/all';
 
-import { useParticipants } from '@/features/ladders';
+import { useParticipants } from '../../api';
 
 function formatPhoneNumber(phoneNumberString: string) {
   var cleaned = ('' + phoneNumberString).replace(/\D/g, '');

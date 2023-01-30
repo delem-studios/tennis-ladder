@@ -10,16 +10,16 @@ import {
 import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { useBoolean, useToast } from '@/hooks';
+
 import {
-  Challenge,
-  Ladder,
   useChallengeById,
   useCreateMatch,
   useDeleteChallenge,
-  useLadderStore,
   useUpdateChallenge,
-} from '@/features/ladders';
-import { useBoolean, useToast } from '@/hooks';
+} from '../../api';
+import { useLadderStore } from '../../stores';
+import { Challenge, Ladder } from '../../types';
 
 interface ChallengeViewFooterProps {
   isChallenger: boolean;

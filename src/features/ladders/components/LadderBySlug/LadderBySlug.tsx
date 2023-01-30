@@ -14,23 +14,31 @@ import {
   Tabs,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import shallow from 'zustand/shallow';
 
-import {
-  Ladder,
-  LadderDetails,
-  LadderMatches,
-  LadderParticipants,
-  LadderSettings,
-  LeaderboardView,
-  MyChallenges,
-  RegisterButton,
-  useLadderStore,
-  useLeaderboard,
-} from '@/features/ladders';
+import { Loading } from '@/components';
 import { client } from '@/libs/client';
+import { lazyImport } from '@/utils/lazyImport';
+
+import { useLeaderboard } from '../../api';
+import { useLadderStore } from '../../stores';
+import { Ladder } from '../../types';
+
+const { LadderDetails } = lazyImport(() => import('../'), 'LadderDetails');
+const { LadderMatches } = lazyImport(() => import('../'), 'LadderMatches');
+const { LadderParticipants } = lazyImport(
+  () => import('../'),
+  'LadderParticipants'
+);
+const { LadderSettings } = lazyImport(() => import('../'), 'LadderSettings');
+const { LeaderboardView } = lazyImport(() => import('../'), 'LeaderboardView');
+const { MyChallenges } = lazyImport(
+  () => import('../MyChallenges'),
+  'MyChallenges'
+);
+const { RegisterButton } = lazyImport(() => import('../'), 'RegisterButton');
 
 export interface LadderBySlugProps {
   ladder: Ladder;
@@ -182,10 +190,10 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
         variant="soft-rounded"
         index={tabIndex}
         py={6}
-        isLazy
         onChange={(tabIndex) => {
           navigate(`/ladders/${ladder.slug}/${tabs[tabIndex].slug}`);
         }}
+        isLazy
       >
         <TabList
           justifyContent="flex-start"
@@ -199,17 +207,19 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
             return <Tab key={`tab-menu-${tab.slug}`}>{tab.name}</Tab>;
           })}
         </TabList>
-        <TabPanels>
-          {tabs.map((tab) => {
-            if (!tab.visible) return null;
+        <Suspense fallback={<Loading />}>
+          <TabPanels>
+            {tabs.map((tab) => {
+              if (!tab.visible) return null;
 
-            return (
-              <TabPanel key={`tab-component-${tab.slug}`}>
-                {tab.Component}
-              </TabPanel>
-            );
-          })}
-        </TabPanels>
+              return (
+                <TabPanel key={`tab-component-${tab.slug}`}>
+                  {tab.Component}
+                </TabPanel>
+              );
+            })}
+          </TabPanels>
+        </Suspense>
       </Tabs>
     </Box>
   );

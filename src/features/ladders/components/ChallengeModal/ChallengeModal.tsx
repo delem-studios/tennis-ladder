@@ -24,13 +24,11 @@ import React from 'react';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
-import {
-  ExpandedParticipant,
-  Ladder,
-  useCreateChallenge,
-  useLadderStore,
-} from '@/features/ladders';
 import { useBoolean, useToast } from '@/hooks';
+
+import { useCreateChallenge } from '../../api';
+import { useLadderStore } from '../../stores';
+import { ExpandedParticipant, Ladder } from '../../types';
 
 const schema = yup.object({
   proposedDates: yup

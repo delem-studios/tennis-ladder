@@ -4,12 +4,10 @@ import dayjs from 'dayjs';
 import React from 'react';
 
 import { DataTable } from '@/components';
-import {
-  ExpandedMatch,
-  Ladder,
-  LadderTabContainer,
-  useMatches,
-} from '@/features/ladders';
+
+import { LadderTabContainer } from '../';
+import { useMatches } from '../../api';
+import { ExpandedMatch, Ladder } from '../../types';
 
 const columnHelper = createColumnHelper<ExpandedMatch>();
 

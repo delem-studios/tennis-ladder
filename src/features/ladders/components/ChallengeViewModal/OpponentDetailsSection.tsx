@@ -1,8 +1,7 @@
 import { Text } from '@chakra-ui/react';
 import React from 'react';
 
-import { ExpandedParticipant } from '@/features/ladders';
-
+import { ExpandedParticipant } from '../../types';
 import { Section } from './Section';
 
 interface OpponentDetailsSectionProps {

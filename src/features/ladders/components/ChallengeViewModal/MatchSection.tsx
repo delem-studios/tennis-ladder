@@ -10,8 +10,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 
-import { ExpandedChallenge, useLadderStore } from '@/features/ladders';
-
+import { useLadderStore } from '../../stores';
+import { ExpandedChallenge } from '../../types';
 import { Section } from './Section';
 
 interface MatchSectionProps {

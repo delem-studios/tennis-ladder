@@ -8,13 +8,11 @@ import {
 import React, { useState } from 'react';
 
 import { Info } from '@/components';
-import {
-  Ladder,
-  LadderTabContainer,
-  useRules,
-  useUpdateRules,
-} from '@/features/ladders';
 import { useToast } from '@/hooks';
+
+import { LadderTabContainer } from '../';
+import { useRules, useUpdateRules } from '../../api';
+import { Ladder } from '../../types';
 
 export interface LadderDetailsProps {
   ladder: Ladder;

@@ -1,8 +1,8 @@
-import { Container } from '@chakra-ui/react';
 import React from 'react';
 
 import { MainLayout } from '@/components';
-import { LadderForm } from '@/features/ladders';
+
+import { LadderForm } from '../components';
 
 export interface LadderCreatePageProps {}
 

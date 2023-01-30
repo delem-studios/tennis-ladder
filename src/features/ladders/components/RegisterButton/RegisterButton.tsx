@@ -1,13 +1,11 @@
 import { Button } from '@chakra-ui/react';
 import React from 'react';
 
-import {
-  Ladder,
-  useParticipants,
-  useRegisterForLadder,
-} from '@/features/ladders';
 import { useBoolean, useToast } from '@/hooks';
 import { client } from '@/libs/client';
+
+import { useParticipants, useRegisterForLadder } from '../../api';
+import { Ladder } from '../../types';
 
 export interface RegisterButtonProps {
   ladder: Ladder;
@@ -25,7 +23,7 @@ export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
     userId &&
     participants?.some((participant) => {
       if (userId === participant.primaryPlayer) return true;
-      if (userId === participant.secondaryPlayer) return true;
+      if (userId === participant.secondaryPlayer) return true; // eslint-disable-current-line
 
       return false;
     });

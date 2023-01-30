@@ -2,8 +2,8 @@ import { Select } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import React from 'react';
 
-import { ExpandedChallenge, useLadderStore } from '@/features/ladders';
-
+import { useLadderStore } from '../../stores';
+import { ExpandedChallenge } from '../../types';
 import { Section } from './Section';
 
 interface ActionsSectionProps {

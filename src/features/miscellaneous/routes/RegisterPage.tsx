@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { AuthLayout, Link } from '@/components';
-import { RegisterForm } from '@/features/miscellaneous';
+
+import { RegisterForm } from '../components';
 
 export interface RegisterPageProps {}
 

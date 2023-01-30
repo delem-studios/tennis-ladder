@@ -2,11 +2,10 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Loading, MainLayout } from '@/components';
-import {
-  LadderBySlug,
-  useLadderBySlug,
-  useLadderStore,
-} from '@/features/ladders';
+
+import { useLadderBySlug } from '../api';
+import { LadderBySlug } from '../components';
+import { useLadderStore } from '../stores';
 
 interface LadderPageProps {}
 

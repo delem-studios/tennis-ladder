@@ -1,13 +1,10 @@
 import { HStack, Text } from '@chakra-ui/react';
 import React from 'react';
 
-import {
-  Ladder,
-  LadderTabContainer,
-  PendingChallenge,
-  useLadderStore,
-  useMyChallenges,
-} from '@/features/ladders';
+import { LadderTabContainer, PendingChallenge } from '../';
+import { useMyChallenges } from '../../api';
+import { useLadderStore } from '../../stores';
+import { Ladder } from '../../types';
 
 export interface MyChallengesProps {
   ladder: Ladder;

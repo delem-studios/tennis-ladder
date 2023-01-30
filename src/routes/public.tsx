@@ -1,12 +1,36 @@
 import { Navigate } from 'react-router-dom';
 
-import { LadderCreatePage, LadderPage, LaddersPage } from '@/features/ladders';
-import {
-  HomePage,
-  LoginPage,
-  LogoutPage,
-  RegisterPage,
-} from '@/features/miscellaneous';
+import { lazyImport } from '@/utils/lazyImport';
+
+const { LadderCreatePage } = lazyImport(
+  () => import('@/features/ladders'),
+  'LadderCreatePage'
+);
+const { LadderPage } = lazyImport(
+  () => import('@/features/ladders'),
+  'LadderPage'
+);
+const { LaddersPage } = lazyImport(
+  () => import('@/features/ladders'),
+  'LaddersPage'
+);
+
+const { HomePage } = lazyImport(
+  () => import('@/features/miscellaneous'),
+  'HomePage'
+);
+const { LoginPage } = lazyImport(
+  () => import('@/features/miscellaneous'),
+  'LoginPage'
+);
+const { LogoutPage } = lazyImport(
+  () => import('@/features/miscellaneous'),
+  'LogoutPage'
+);
+const { RegisterPage } = lazyImport(
+  () => import('@/features/miscellaneous'),
+  'RegisterPage'
+);
 
 export const publicRoutes = [
   {

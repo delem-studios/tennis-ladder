@@ -27,21 +27,19 @@ import {
 } from '@tanstack/react-table';
 import React, { useRef, useState } from 'react';
 
+import { useBoolean, useToast } from '@/hooks';
+import { Expand, User } from '@/types';
+
+import { ChallengeModal, LadderTabContainer } from '../';
 import {
-  ChallengeModal,
-  ExpandedParticipant,
-  Ladder,
-  LadderTabContainer,
-  Participant,
-  useLadderStore,
   useLeaderboard,
   useMyChallenges,
   useRules,
   useUpdateLeaderboard,
-} from '@/features/ladders';
-import { hasOutboundChallengesRemaining } from '@/features/ladders/utils/rules';
-import { useBoolean, useToast } from '@/hooks';
-import { Expand, User } from '@/types';
+} from '../../api';
+import { useLadderStore } from '../../stores';
+import { ExpandedParticipant, Ladder, Participant } from '../../types';
+import { hasOutboundChallengesRemaining } from '../../utils';
 
 const columnHelper =
   createColumnHelper<Expand<Participant, { primaryPlayer: User }>>();

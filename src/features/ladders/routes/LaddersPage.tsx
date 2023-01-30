@@ -4,7 +4,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { DataTable, MainLayout } from '@/components';
-import { Ladder, useMyLadders } from '@/features/ladders';
+
+import { useMyLadders } from '../api';
+import { Ladder } from '../types';
 
 const columnHelper = createColumnHelper<Ladder>();
 

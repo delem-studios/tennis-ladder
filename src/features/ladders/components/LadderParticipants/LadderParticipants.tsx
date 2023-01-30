@@ -1,10 +1,7 @@
 import React from 'react';
 
-import {
-  Ladder,
-  LadderTabContainer,
-  ParticipantsList,
-} from '@/features/ladders';
+import { LadderTabContainer, ParticipantsList } from '../';
+import { Ladder } from '../../types';
 
 export interface LadderParticipantsProps {
   ladder: Ladder;

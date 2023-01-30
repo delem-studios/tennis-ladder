@@ -10,14 +10,10 @@ import {
 import React from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import {
-  defaultChallengeViewModalState,
-  useChallengeById,
-  useLadderStore,
-  useLeaderboard,
-} from '@/features/ladders';
 import { client } from '@/libs/client';
 
+import { useChallengeById, useLeaderboard } from '../../api';
+import { defaultChallengeViewModalState, useLadderStore } from '../../stores';
 import { ActionsSection } from './ActionsSection';
 import { ChallengeViewFooter } from './ChallengeViewFooter';
 import { DetailsSection } from './DetailsSection';
