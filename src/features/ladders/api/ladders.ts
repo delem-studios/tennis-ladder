@@ -1,3 +1,4 @@
+import { ClientResponseError } from 'pocketbase';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import {
@@ -5,10 +6,12 @@ import {
   ExpandedChallenge,
   ExpandedLeaderboard,
   ExpandedMatch,
+  ExpandedRegistration,
   Ladder,
   Leaderboard,
   Match,
   Participant,
+  Registration,
   Rules,
 } from '@/features/ladders';
 import { client } from '@/libs/client';
@@ -46,14 +49,88 @@ export const useRegisterForLadder = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    async (ladderId: string) =>
-      client.collection('participants').create({
-        ladder: ladderId,
-        primaryPlayer: client.authStore.model?.id,
-      }),
+    async (
+      data: Pick<Registration, 'ladder' | 'primaryPlayer' | 'secondaryPlayer'>
+    ) => client.collection('registrations').create(data),
     {
       onSuccess: () => {
         void queryClient.invalidateQueries(['ladders']);
+        void queryClient.invalidateQueries(['registrations']);
+      },
+    }
+  );
+};
+
+export const useRegistrations = ({
+  ladderId,
+  page,
+  perPage,
+}: {
+  ladderId: string;
+  page: number;
+  perPage: number;
+}) => {
+  return useQuery(['ladders', ladderId, 'registrations'], async () =>
+    client
+      .collection('registrations')
+      .getList<ExpandedRegistration>(page, perPage, {
+        filter: `ladder="${ladderId}"`,
+        expand: 'primaryPlayer,secondaryPlayer',
+      })
+  );
+};
+
+export const useRegistrationById = (userId?: string) => {
+  return useQuery(
+    ['registrations', userId],
+    async () =>
+      client
+        .collection('registrations')
+        .getFirstListItem<ExpandedRegistration>(`primaryPlayer="${userId}"`, {
+          expand: 'primaryPlayer,secondaryPlayer',
+        }),
+    {
+      enabled: Boolean(userId),
+    }
+  );
+};
+
+export const useUpdateRegistration = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Registration,
+    ClientResponseError,
+    {
+      ladderId: string;
+      registration: Registration;
+    }
+  >(
+    async ({ ladderId, registration }) => {
+      if (registration.status === 'accepted') {
+        await client.collection('participants').create({
+          ladder: ladderId,
+          primaryPlayer: registration.primaryPlayer,
+        });
+      }
+
+      if (registration.status === 'rejected') {
+        const participant = await client
+          .collection('participants')
+          .getFirstListItem<Participant>(
+            `primaryPlayer="${registration.primaryPlayer}"`
+          );
+        await client.collection('participants').delete(participant.id);
+      }
+
+      return await client
+        .collection('registrations')
+        .update(registration.id, registration);
+    },
+    {
+      onSuccess: (_, params) => {
+        void queryClient.invalidateQueries(['ladders', params.ladderId]);
+        void queryClient.invalidateQueries(['registrations']);
       },
     }
   );

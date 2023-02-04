@@ -28,7 +28,7 @@ export const DataTable = <Data extends object>({
 }: TableProps<Data>) => {
   const table = useReactTable({
     columns,
-    data: data || [],
+    data: data ?? [],
     getCoreRowModel: getCoreRowModel(),
   });
 

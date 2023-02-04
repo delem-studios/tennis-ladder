@@ -13,3 +13,5 @@ export * from './MyChallenges';
 export * from './ParticipantsList';
 export * from './PendingChallenge';
 export * from './RegisterButton';
+
+export * from './LadderRegistrations';

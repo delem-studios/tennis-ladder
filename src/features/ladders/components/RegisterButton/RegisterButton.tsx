@@ -4,7 +4,7 @@ import React from 'react';
 import { useBoolean, useToast } from '@/hooks';
 import { client } from '@/libs/client';
 
-import { useParticipants, useRegisterForLadder } from '../../api';
+import { useRegisterForLadder, useRegistrationById } from '../../api';
 import { Ladder } from '../../types';
 
 export interface RegisterButtonProps {
@@ -14,35 +14,35 @@ export interface RegisterButtonProps {
 export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
   const toast = useToast();
   const { state: loading, setState: setLoading } = useBoolean();
-
-  const { data: participants } = useParticipants(ladder.id);
-  const { mutate: register } = useRegisterForLadder();
-
   const userId = client.authStore.model?.id;
-  const isRegistered =
-    userId &&
-    participants?.some((participant) => {
-      if (userId === participant.primaryPlayer) return true;
-      if (userId === participant.secondaryPlayer) return true; // eslint-disable-current-line
 
-      return false;
-    });
+  const { mutate: register } = useRegisterForLadder();
+  const registration = useRegistrationById(userId);
+
+  const isRegistered = userId && registration.isSuccess && registration.data;
 
   const handleRegister = () => {
+    if (!userId) return;
+
     setLoading(true);
 
-    register(ladder.id, {
-      onSuccess: () => {
-        toast({ title: 'Registered successfully!' });
-      },
-      onError: () => {
-        toast({ title: 'Unable to register at this time.', status: 'error' });
-      },
-      onSettled: () => {
-        setLoading(false);
-      },
-    });
+    register(
+      { ladder: ladder.id, primaryPlayer: userId },
+      {
+        onSuccess: () => {
+          toast({ title: 'Registered successfully!' });
+        },
+        onError: () => {
+          toast({ title: 'Unable to register at this time.', status: 'error' });
+        },
+        onSettled: () => {
+          setLoading(false);
+        },
+      }
+    );
   };
+
+  if (!userId) return null;
 
   return (
     <Button

@@ -19,6 +19,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import shallow from 'zustand/shallow';
 
 import { Loading } from '@/components';
+import { LadderRegistrations } from '@/features/ladders';
 import { client } from '@/libs/client';
 import { lazyImport } from '@/utils/lazyImport';
 
@@ -84,8 +85,9 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
             (participant) =>
               participant.primaryPlayer === myId ||
               participant.secondaryPlayer === myId
-          )) ||
+          )) ??
         -1;
+
       const myTeamId = leaderboard?.leaderboard[myTeamIndex];
 
       setFields({
@@ -123,6 +125,12 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
       visible: true,
     },
     {
+      name: 'Registrations',
+      slug: 'registrations',
+      Component: <LadderRegistrations ladder={ladder} />,
+      visible: isAdmin,
+    },
+    {
       name: 'Details',
       slug: 'details',
       Component: <LadderDetails ladder={ladder} />,
@@ -141,7 +149,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
     <Box>
       <Box px={4}>
         <Flex justify="space-between" py={6}>
-          <Heading alignItems="center" mr={4}>
+          <Heading size="2xl" alignItems="center" mr={4}>
             {ladder.name}
           </Heading>
           {ladder.status === 'registration' && (

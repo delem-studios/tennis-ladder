@@ -12,7 +12,7 @@ export const LadderTabContainer = ({
 }: LadderTabContainerProps) => {
   return (
     <Box mt={2}>
-      <Heading size="lg" mb={6}>
+      <Heading size="xl" mb={6}>
         {title}
       </Heading>
       {children}

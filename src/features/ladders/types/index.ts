@@ -4,3 +4,4 @@ export * from './rules';
 export * from './leaderboards';
 export * from './challenges';
 export * from './matches';
+export * from './registrations';

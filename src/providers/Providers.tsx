@@ -16,7 +16,7 @@ export const Providers = ({ children }: ProvidersProps) => {
   const client = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
       },
     },
   });

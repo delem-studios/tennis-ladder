@@ -4,17 +4,18 @@ import {
   ButtonGroup,
   Flex,
   HStack,
-  Heading,
-  IconButton,
   Text,
   useBreakpointValue,
   useColorModeValue,
 } from '@chakra-ui/react';
 import React from 'react';
-import { FiMenu } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
+import { mainMenu } from '@/config';
 import { client } from '@/libs/client';
+
+import { Logo } from './Logo';
+import { MobileMenu } from './MobileMenu';
 
 interface TopbarProps {}
 
@@ -33,24 +34,17 @@ export const Topbar = ({}: TopbarProps) => {
       >
         <Box py={{ base: '3' }} px={4}>
           <HStack spacing="10" justify="space-between">
-            <Heading
-              as="a"
-              onClick={() => navigate('/')}
-              fontWeight="black"
-              size="lg"
-            >
-              Ladder
-            </Heading>
+            <Logo onClick={() => navigate('/')} />
             {isDesktop ? (
               <Flex justify="space-between" flex="1">
                 <ButtonGroup variant="link" spacing="8">
-                  {['ladders'].map((item) => (
+                  {mainMenu.map((item) => (
                     <Button
-                      key={item}
-                      onClick={() => navigate(`/${item}`)}
+                      key={item.link}
+                      onClick={() => navigate(item.link)}
                       textTransform="capitalize"
                     >
-                      {item}
+                      {item.label}
                     </Button>
                   ))}
                 </ButtonGroup>
@@ -84,11 +78,7 @@ export const Topbar = ({}: TopbarProps) => {
                 </HStack>
               </Flex>
             ) : (
-              <IconButton
-                variant="ghost"
-                icon={<FiMenu fontSize="1.25rem" />}
-                aria-label="Open Menu"
-              />
+              <MobileMenu />
             )}
           </HStack>
         </Box>

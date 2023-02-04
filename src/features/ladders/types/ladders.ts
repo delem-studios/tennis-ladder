@@ -1,5 +1,5 @@
 import { Organization } from '@/features/organizations';
-import { BaseEntity } from '@/types';
+import { BaseEntity, Expand, User } from '@/types';
 
 export interface Ladder extends BaseEntity {
   id: string;
@@ -21,5 +21,12 @@ export interface Ladder extends BaseEntity {
   format: 'singles' | 'doubles';
   organization?: Organization;
 }
+
+export type ExpandedLadder = Expand<
+  Ladder,
+  {
+    organizers: Array<User>;
+  }
+>;
 
 export type LadderStatus = 'draft' | 'registration' | 'running' | 'completed';

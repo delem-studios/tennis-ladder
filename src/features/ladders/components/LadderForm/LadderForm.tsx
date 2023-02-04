@@ -173,7 +173,9 @@ export const LadderForm = ({}: LadderFormProps) => {
                 <RadioGroup onChange={onChange} value={value}>
                   <Stack>
                     <Radio value="singles">Singles</Radio>
-                    <Radio value="doubles">Doubles</Radio>
+                    <Radio value="doubles" isDisabled>
+                      Doubles
+                    </Radio>
                   </Stack>
                 </RadioGroup>
               )}

@@ -13,10 +13,14 @@ export interface MyChallengesProps {
 export const MyChallenges = ({ ladder }: MyChallengesProps) => {
   const { myParticipantId } = useLadderStore();
 
+  console.log('myParticipantId:', myParticipantId);
+
   const { data: challenges } = useMyChallenges({
     ladderId: ladder.id,
     myParticipantId,
   });
+
+  console.log('challenges:', challenges);
 
   return (
     <LadderTabContainer title="Your Challenges">
