@@ -132,14 +132,16 @@ export const ChallengeViewFooter = ({
       {isChallenger && isPending && (
         <Flex flex={1}>
           <Tooltip label="Delete challenge" aria-label="Delete challenge">
-            <IconButton
+            <Button
               aria-label="Delete this challenge"
-              icon={<DeleteIcon />}
+              // leftIcon={<DeleteIcon />}
               colorScheme="red"
               variant="ghost"
               onClick={handleDelete}
               isLoading={isLoading}
-            />
+            >
+              Delete
+            </Button>
           </Tooltip>
         </Flex>
       )}

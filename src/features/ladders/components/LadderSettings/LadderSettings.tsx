@@ -1,10 +1,14 @@
+import { CopyIcon } from '@chakra-ui/icons';
 import {
   Box,
   Container,
   Flex,
+  HStack,
+  IconButton,
   Input,
   Select,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
@@ -140,6 +144,31 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
               <option value="completed">Completed</option>
             </Select>
           </SettingsItem>
+          <SettingsItem
+            title="Registration Code"
+            help="Code required to register for the ladder."
+          >
+            <HStack>
+              <Text bgColor="gray.100" px={2} fontFamily="mono">
+                {ladder.registrationCode}
+              </Text>
+              <Tooltip label="Copy registration code to clipboard">
+                <IconButton
+                  aria-label="Copy registration code to clipboard"
+                  icon={<CopyIcon />}
+                  onClick={async () => {
+                    if (!ladder.registrationCode) return;
+                    await navigator.clipboard.writeText(
+                      ladder.registrationCode
+                    );
+                    toast({ title: 'Copied to clipboard!' });
+                  }}
+                  size="sm"
+                  variant="ghost"
+                />
+              </Tooltip>
+            </HStack>
+          </SettingsItem>
 
           <SettingsItem title="Start Date" help="Set the ladder start date.">
             <Input
@@ -163,6 +192,7 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
               isDisabled={loading}
             />
           </SettingsItem>
+
           <SettingsItem
             title="Challenge Range"
             help="The rank differential limit players can challenge."

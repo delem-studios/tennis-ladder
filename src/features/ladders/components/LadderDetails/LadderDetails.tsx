@@ -1,14 +1,11 @@
-import {
-  Editable,
-  EditablePreview,
-  EditableTextarea,
-  StatGroup,
-  Textarea,
-} from '@chakra-ui/react';
+import { Button, HStack, StatGroup, Textarea } from '@chakra-ui/react';
+import ChakraReactMarkdown from 'chakra-ui-markdown-renderer';
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { Info } from '@/components';
-import { useToast } from '@/hooks';
+import { useLadderStore } from '@/features/ladders';
+import { useBoolean, useToast } from '@/hooks';
 
 import { LadderTabContainer } from '../';
 import { useRules, useUpdateRules } from '../../api';
@@ -23,6 +20,8 @@ export const LadderDetails = ({ ladder }: LadderDetailsProps) => {
   const { data: rules, isSuccess } = useRules(ladder.id);
   const [details, setDetails] = useState(rules?.details || '');
   const { mutate: updateRules } = useUpdateRules();
+  const { isAdmin } = useLadderStore();
+  const { state: isEditing, setState: setIsEditing } = useBoolean();
 
   const handleSave = () => {
     if (!rules) return;
@@ -30,11 +29,25 @@ export const LadderDetails = ({ ladder }: LadderDetailsProps) => {
     updateRules(
       { ...rules, details },
       {
+        onSuccess: () => {
+          toast({ title: 'Details updated!' });
+          setIsEditing(false);
+        },
         onError: () => {
           toast({ title: 'Unable to update rules.', status: 'error' });
         },
       }
     );
+  };
+
+  const handleCancel = () => {
+    setDetails(rules?.details || '');
+    setIsEditing(false);
+  };
+
+  const handleEdit = () => {
+    setDetails(rules?.details || '');
+    setIsEditing(true);
   };
 
   return (
@@ -65,19 +78,30 @@ export const LadderDetails = ({ ladder }: LadderDetailsProps) => {
           content={rules?.inboundChallengeLimit}
         />
       </StatGroup>
-      {isSuccess && (
-        <Editable
-          placeholder="No details have been provided."
-          defaultValue={rules?.details}
-        >
-          <EditablePreview whiteSpace="break-spaces" />
-          <Textarea
-            as={EditableTextarea}
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            onBlur={handleSave}
-          />
-        </Editable>
+      <ReactMarkdown
+        components={ChakraReactMarkdown()}
+        children={rules?.details || 'No details have been provided.'}
+        skipHtml
+      />
+      {isAdmin && !isEditing && (
+        <Button onClick={handleEdit} my={4}>
+          Edit
+        </Button>
+      )}
+      {isEditing && (
+        <HStack my={4}>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleSave} colorScheme="blue">
+            Confirm
+          </Button>
+        </HStack>
+      )}
+      {isEditing && (
+        <Textarea
+          value={details}
+          onChange={(e) => setDetails(e.target.value)}
+          rows={10}
+        />
       )}
     </LadderTabContainer>
   );

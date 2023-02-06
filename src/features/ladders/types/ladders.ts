@@ -20,6 +20,8 @@ export interface Ladder extends BaseEntity {
 
   format: 'singles' | 'doubles';
   organization?: Organization;
+
+  registrationCode?: string;
 }
 
 export type ExpandedLadder = Expand<

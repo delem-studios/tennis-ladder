@@ -53,14 +53,9 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
     ladder.id
   );
 
-  const { ladderId, setFields, isParticipating } = useLadderStore(
+  const { ladderId, setFields, isParticipating, isAdmin } = useLadderStore(
     (state) => state,
     shallow
-  );
-
-  const userId = client.authStore.model?.id;
-  const isAdmin = Boolean(
-    userId && ladder.organizers.some((organizer) => organizer === userId)
   );
 
   useEffect(() => {
@@ -89,12 +84,17 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
         -1;
 
       const myTeamId = leaderboard?.leaderboard[myTeamIndex];
+      const userId = client.authStore.model?.id;
+      const isAdmin = Boolean(
+        userId && ladder.organizers.some((organizer) => organizer === userId)
+      );
 
       setFields({
         ladderId,
         myParticipantId: myTeamId,
         myParticipantRank: myTeamIndex + 1,
         isParticipating,
+        isAdmin,
       });
     }
   }, [ladder.id, leaderboard]);

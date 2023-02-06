@@ -76,6 +76,7 @@ export const LadderRegistrations = ({ ladder }: LadderRegistrationsProps) => {
                 e.target.value as RegistrationStatus
               )
             }
+            size="sm"
           >
             {['pending', 'accepted', 'rejected'].map((value) => (
               <option value={value} key={value}>
@@ -95,45 +96,7 @@ export const LadderRegistrations = ({ ladder }: LadderRegistrationsProps) => {
 
   return (
     <LadderTabContainer title="Registrations">
-      <DataTable columns={columns} data={registrations.data.items} />
-
-      {/*<Grid templateColumns="repeat(3, 1fr)">*/}
-      {/*  <GridItem colSpan={{ base: 3, sm: 2, md: 1 }}>*/}
-      {/*    <Heading size="lg" mb={4}>*/}
-      {/*      Pending*/}
-      {/*    </Heading>*/}
-      {/*    {registrations.data.items.map((registration) => {*/}
-      {/*      const player = registration.expand.primaryPlayer;*/}
-
-      {/*      return (*/}
-      {/*        <Card key={registration.id} variant="outline">*/}
-      {/*          <CardHeader>*/}
-      {/*            <Heading size="md">{player.name}</Heading>*/}
-      {/*          </CardHeader>*/}
-      {/*          <CardBody>*/}
-      {/*            <Text>*/}
-      {/*              <b>Email</b>: {player.email}*/}
-      {/*            </Text>*/}
-      {/*            <Text>*/}
-      {/*              <b>Phone</b>: {player.phone}*/}
-      {/*            </Text>*/}
-      {/*            <Text>*/}
-      {/*              <b>Registered on</b>: {formatDate(registration.created)}*/}
-      {/*            </Text>*/}
-      {/*          </CardBody>*/}
-      {/*          <CardFooter>*/}
-      {/*            <Stack direction="row">*/}
-      {/*              <Button colorScheme="blue">Accept</Button>*/}
-      {/*              <Button colorScheme="red" variant="outline">*/}
-      {/*                Reject*/}
-      {/*              </Button>*/}
-      {/*            </Stack>*/}
-      {/*          </CardFooter>*/}
-      {/*        </Card>*/}
-      {/*      );*/}
-      {/*    })}*/}
-      {/*  </GridItem>*/}
-      {/*</Grid>*/}
+      <DataTable columns={columns} data={registrations.data.items} size="sm" />
     </LadderTabContainer>
   );
 };

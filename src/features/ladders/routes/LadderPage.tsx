@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Loading, MainLayout } from '@/components';
+import { useToast } from '@/hooks';
 
 import { useLadderBySlug } from '../api';
 import { LadderBySlug } from '../components';
@@ -11,22 +12,32 @@ interface LadderPageProps {}
 
 export const LadderPage = ({}: LadderPageProps) => {
   const { ladderSlug } = useParams();
-  const { data: ladder } = useLadderBySlug(ladderSlug as string);
+  const navigate = useNavigate();
+  const toast = useToast();
+  const ladder = useLadderBySlug(ladderSlug as string);
   const { setField } = useLadderStore();
 
   useEffect(() => {
-    if (ladder) {
-      setField('ladder', ladder);
+    if (ladder.data) {
+      setField('ladder', ladder.data);
+    }
+
+    if (ladder.error) {
+      if (ladder.error.status === 404) {
+        navigate('/ladders');
+        toast({ title: 'Ladder does not exist.', status: 'error' });
+      }
     }
 
     return () => {
       setField('ladder', null);
     };
-  }, [ladder]);
+  }, [ladder.data, ladder.error]);
 
   return (
     <MainLayout container>
-      {!ladder ? <Loading /> : <LadderBySlug ladder={ladder} />}
+      {ladder.isLoading && <Loading />}
+      {ladder.data && <LadderBySlug ladder={ladder.data} />}
     </MainLayout>
   );
 };

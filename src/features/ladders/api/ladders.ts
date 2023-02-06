@@ -6,6 +6,7 @@ import {
   ExpandedChallenge,
   ExpandedLeaderboard,
   ExpandedMatch,
+  ExpandedParticipant,
   ExpandedRegistration,
   Ladder,
   Leaderboard,
@@ -15,7 +16,6 @@ import {
   Rules,
 } from '@/features/ladders';
 import { client } from '@/libs/client';
-import { Expand, User } from '@/types';
 
 export const useMyLadders = () => {
   return useQuery('my-ladders', async () =>
@@ -24,10 +24,9 @@ export const useMyLadders = () => {
 };
 
 export const useLadderBySlug = (slug?: string) => {
-  return useQuery(
+  return useQuery<Ladder, ClientResponseError>(
     ['ladders', slug],
-    async () =>
-      client.collection('ladders').getFirstListItem<Ladder>(`slug="${slug}"`),
+    async () => client.send(`/api/ladders/${slug}`, {}),
     {
       enabled: Boolean(slug),
     }
@@ -36,29 +35,32 @@ export const useLadderBySlug = (slug?: string) => {
 
 export const useParticipants = (ladderId: string) => {
   return useQuery(['ladders', ladderId, 'participants'], async () =>
-    client
-      .collection('participants')
-      .getFullList<Expand<Participant, { primaryPlayer: User }>>(200, {
-        filter: `ladder="${ladderId}"`,
-        expand: 'primaryPlayer',
-      })
+    client.collection('participants').getFullList<ExpandedParticipant>(200, {
+      filter: `ladder="${ladderId}"`,
+      expand: 'primaryPlayer,secondaryPlayer',
+    })
   );
 };
 
 export const useRegisterForLadder = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    async (
-      data: Pick<Registration, 'ladder' | 'primaryPlayer' | 'secondaryPlayer'>
-    ) => client.collection('registrations').create(data),
-    {
-      onSuccess: () => {
-        void queryClient.invalidateQueries(['ladders']);
-        void queryClient.invalidateQueries(['registrations']);
-      },
+  return useMutation<
+    Registration,
+    ClientResponseError,
+    Pick<Registration, 'ladder' | 'primaryPlayer' | 'secondaryPlayer'> & {
+      registrationCode: string;
     }
-  );
+  >(async (data) => client.collection('registrations').create(data), {
+    onSuccess: (_, context) => {
+      void queryClient.invalidateQueries([
+        'ladders',
+        context.ladder,
+        'registrations',
+      ]);
+      void queryClient.invalidateQueries(['registrations']);
+    },
+  });
 };
 
 export const useRegistrations = ({
@@ -80,17 +82,26 @@ export const useRegistrations = ({
   );
 };
 
-export const useRegistrationById = (userId?: string) => {
+export const useRegistrationById = ({
+  ladderId,
+  userId,
+}: {
+  ladderId?: string;
+  userId?: string;
+}) => {
   return useQuery(
-    ['registrations', userId],
+    ['registrations', ladderId, userId],
     async () =>
       client
         .collection('registrations')
-        .getFirstListItem<ExpandedRegistration>(`primaryPlayer="${userId}"`, {
-          expand: 'primaryPlayer,secondaryPlayer',
-        }),
+        .getFirstListItem<ExpandedRegistration>(
+          `ladder="${ladderId}"&&primaryPlayer="${userId}"`,
+          {
+            expand: 'primaryPlayer,secondaryPlayer',
+          }
+        ),
     {
-      enabled: Boolean(userId),
+      enabled: Boolean(userId) && Boolean(ladderId),
     }
   );
 };
@@ -192,7 +203,8 @@ export const useLeaderboard = (ladderId?: string) => {
     client
       .collection('leaderboards')
       .getFirstListItem<ExpandedLeaderboard>(`ladder="${ladderId}"`, {
-        expand: 'leaderboard,leaderboard.primaryPlayer',
+        expand:
+          'leaderboard,leaderboard.primaryPlayer,leaderboard.secondaryPlayer',
       })
   );
 };
@@ -227,7 +239,7 @@ export const useChallengeById = ({
     async () =>
       client.collection('challenges').getOne<ExpandedChallenge>(challengeId!, {
         expand:
-          'challenger,challengee,challenger.primaryPlayer,challengee.primaryPlayer',
+          'challenger,challengee,challenger.primaryPlayer,challengee.primaryPlayer,challenger.secondaryPlayer,challengee.secondaryPlayer',
       }),
     { enabled: Boolean(challengeId) }
   );
@@ -246,7 +258,7 @@ export const useChallenges = ({
     client.collection('challenges').getList<ExpandedChallenge>(page, perPage, {
       filter: `ladder="${ladderId}"`,
       expand:
-        'challenger,challengee,challenger.primaryPlayer,challengee.primaryPlayer',
+        'challenger,challengee,challenger.primaryPlayer,challengee.primaryPlayer,challenger.secondaryPlayer,challengee.secondaryPlayer',
     })
   );
 };
@@ -264,7 +276,7 @@ export const useMyChallenges = ({
       client.collection('challenges').getFullList<ExpandedChallenge>(200, {
         filter: `ladder="${ladderId}" && (challenger="${myParticipantId}" || challengee="${myParticipantId}") && status != "completed"`,
         expand:
-          'challenger,challengee,challenger.primaryPlayer,challengee.primaryPlayer',
+          'challenger,challengee,challenger.primaryPlayer,challengee.primaryPlayer,challenger.secondaryPlayer,challengee.secondaryPlayer',
       }),
     {
       enabled: Boolean(myParticipantId),
@@ -367,7 +379,7 @@ export const useMatches = ({
       client.collection('matches').getList<ExpandedMatch>(page, perPage, {
         filter: `ladder="${ladderId}"`,
         expand:
-          'winner,loser,winner.primaryPlayer,loser.primaryPlayer,challenge',
+          'winner,loser,winner.primaryPlayer,loser.primaryPlayer,winner.secondaryPlayer,loser.secondaryPlayer,challenge',
       }),
     {
       enabled: Boolean(ladderId),

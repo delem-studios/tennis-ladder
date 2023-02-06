@@ -4,3 +4,5 @@ export const mainMenu = [
     link: '/ladders',
   },
 ];
+
+export const REGISTRATION_CODE_LENGTH = 10;

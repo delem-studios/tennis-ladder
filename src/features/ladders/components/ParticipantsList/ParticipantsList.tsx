@@ -1,12 +1,10 @@
-import { EmailIcon } from '@chakra-ui/icons';
+import { EmailIcon, PhoneIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
   Divider,
   Flex,
-  HStack,
   Heading,
-  IconButton,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -48,20 +46,16 @@ export const ParticipantsList = ({ ladderId }: ParticipantsListProps) => {
               <Heading size="sm">
                 {participant.expand.primaryPlayer.name}
               </Heading>
-              <Text>{participant.expand.primaryPlayer.email}</Text>
-              <Text>
+              <Text alignItems="center" display="flex">
+                <EmailIcon color="gray.400" mr={2} />
+                {participant.expand.primaryPlayer.email}
+              </Text>
+              <Text alignItems="center" display="flex">
+                <PhoneIcon color="gray.400" mr={2} fontSize="14px" />
                 {formatPhoneNumber(participant.expand.primaryPlayer.phone)}
               </Text>
             </Box>
           </Flex>
-          <HStack>
-            <IconButton
-              icon={<EmailIcon />}
-              aria-label={`Email ${participant.expand.primaryPlayer.name}`}
-              variant="ghost"
-              colorScheme="blue"
-            />
-          </HStack>
         </Flex>
       ))}
     </VStack>

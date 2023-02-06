@@ -1,6 +1,19 @@
-import { Button } from '@chakra-ui/react';
-import React from 'react';
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
+import React, { useState } from 'react';
 
+import { REGISTRATION_CODE_LENGTH } from '@/config';
 import { useBoolean, useToast } from '@/hooks';
 import { client } from '@/libs/client';
 
@@ -14,10 +27,12 @@ export interface RegisterButtonProps {
 export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
   const toast = useToast();
   const { state: loading, setState: setLoading } = useBoolean();
+  const { state: isOpen, setState: setIsOpen } = useBoolean();
+  const [registrationCode, setRegistrationCode] = useState('');
   const userId = client.authStore.model?.id;
 
   const { mutate: register } = useRegisterForLadder();
-  const registration = useRegistrationById(userId);
+  const registration = useRegistrationById({ ladderId: ladder.id, userId });
 
   const isRegistered = userId && registration.isSuccess && registration.data;
 
@@ -27,13 +42,17 @@ export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
     setLoading(true);
 
     register(
-      { ladder: ladder.id, primaryPlayer: userId },
+      { ladder: ladder.id, primaryPlayer: userId, registrationCode },
       {
         onSuccess: () => {
           toast({ title: 'Registered successfully!' });
+          setIsOpen(false);
         },
         onError: () => {
-          toast({ title: 'Unable to register at this time.', status: 'error' });
+          toast({
+            title: 'Registration code is not correct.',
+            status: 'error',
+          });
         },
         onSettled: () => {
           setLoading(false);
@@ -45,12 +64,45 @@ export const RegisterButton = ({ ladder }: RegisterButtonProps) => {
   if (!userId) return null;
 
   return (
-    <Button
-      onClick={handleRegister}
-      isLoading={loading}
-      disabled={Boolean(isRegistered)}
-    >
-      {isRegistered ? 'Registered!' : 'Register'}
-    </Button>
+    <>
+      <Button onClick={() => setIsOpen(true)} disabled={Boolean(isRegistered)}>
+        {isRegistered ? 'Registered!' : 'Register'}
+      </Button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Registration</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>
+              Please provide the registration code. If you do not have the code,
+              please ask the ladder organizer for the code.
+            </Text>
+            <Input
+              placeholder="Please enter registration code."
+              value={registrationCode}
+              onChange={(e) => setRegistrationCode(e.target.value)}
+              mt={4}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Stack direction="row">
+              <Button isLoading={loading}>Cancel</Button>
+              <Button
+                disabled={
+                  !registrationCode ||
+                  registrationCode.length !== REGISTRATION_CODE_LENGTH
+                }
+                onClick={handleRegister}
+                colorScheme="blue"
+                isLoading={loading}
+              >
+                Register
+              </Button>
+            </Stack>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };

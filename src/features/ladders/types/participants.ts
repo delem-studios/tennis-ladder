@@ -17,4 +17,7 @@ export interface Participant extends BaseEntity {
   gamesLost?: number;
 }
 
-export type ExpandedParticipant = Expand<Participant, { primaryPlayer: User }>;
+export type ExpandedParticipant = Expand<
+  Participant,
+  { primaryPlayer: User; secondaryPlayer: User }
+>;

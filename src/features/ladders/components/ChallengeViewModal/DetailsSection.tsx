@@ -41,11 +41,11 @@ export const DetailsSection = ({
       {isPending && <ProposedDates challenge={challenge} />}
       {isAccepted && <AcceptedDate challenge={challenge} />}
 
-      <Text>Status: {challenge.status}</Text>
+      {/*<Text>Status: {challenge.status}</Text>*/}
       {myParticipantRank !== null && (
-        <Box>
-          <Text>Your Current Rank: {myParticipantRank}</Text>
-          <Text>Your Opponent Rank: {myOpponentRank}</Text>
+        <Box mt={2}>
+          <Text>Your current rank: {myParticipantRank}</Text>
+          <Text>Your opponent's rank: {myOpponentRank}</Text>
 
           <Text>
             If you win this match, your new rank would be{' '}

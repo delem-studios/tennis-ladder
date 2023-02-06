@@ -101,6 +101,14 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
     setProposed([]);
   };
 
+  const handleUp = (index: number) => {
+    setProposed(moveParticipantUp(proposed, index));
+  };
+
+  const handleDown = (index: number) => {
+    setProposed(moveParticipantDown(proposed, index));
+  };
+
   const columns = [
     columnHelper.accessor('rank', {
       cell: (info) => info.row.index + 1,
@@ -108,9 +116,7 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
     }),
     columnHelper.accessor('expand.primaryPlayer.name', {
       cell: (info) => {
-        const isMe =
-          typeof myParticipantRank === 'number' &&
-          info.row.index === myParticipantRank - 1;
+        const isMe = info.row.original.id === myParticipantId;
 
         return isMe ? (
           <Text fontWeight="bold">{info.getValue()}</Text>
@@ -135,9 +141,7 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
 
         const rowRank = info.row.index + 1;
 
-        const isMe =
-          typeof myParticipantRank === 'number' &&
-          info.row.index === myParticipantRank - 1;
+        const isMe = info.row.original.id === myParticipantId;
         const rankDiff =
           typeof myParticipantRank === 'number' &&
           Math.abs(rowRank - myParticipantRank);
@@ -180,12 +184,20 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
               />
             )}
             {isAdmin && isEditing && (
-              <Button size="sm" leftIcon={<ArrowUpIcon />}>
+              <Button
+                size="sm"
+                leftIcon={<ArrowUpIcon />}
+                onClick={() => handleUp(info.row.index)}
+              >
                 Up
               </Button>
             )}
             {isAdmin && isEditing && (
-              <Button size="sm" leftIcon={<ArrowDownIcon />}>
+              <Button
+                size="sm"
+                leftIcon={<ArrowDownIcon />}
+                onClick={() => handleDown(info.row.index)}
+              >
                 Down
               </Button>
             )}
@@ -333,4 +345,34 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
       </Box>
     </LadderTabContainer>
   );
+};
+
+const moveParticipantUp = (
+  currentBoard: ExpandedParticipant[],
+  index: number
+) => {
+  if (index === 0) return currentBoard;
+
+  const participantToMoveDown = currentBoard[index - 1];
+
+  const copyBoard = [...currentBoard];
+  copyBoard.splice(index - 1, 1);
+  copyBoard.splice(index, 0, participantToMoveDown);
+
+  return copyBoard;
+};
+
+const moveParticipantDown = (
+  currentBoard: ExpandedParticipant[],
+  index: number
+) => {
+  if (index === currentBoard.length - 1) return currentBoard;
+
+  const participantToMoveUp = currentBoard[index + 1];
+
+  const copyBoard = [...currentBoard];
+  copyBoard.splice(index + 1, 1);
+  copyBoard.splice(index, 0, participantToMoveUp);
+
+  return copyBoard;
 };
