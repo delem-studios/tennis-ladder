@@ -41,9 +41,11 @@ export const LaddersPage = () => {
 
   return (
     <MainLayout container>
-      <Flex justify="space-between" align="center">
+      <Flex justify="space-between" align="center" p={4}>
         <Heading size="xl">Ladders</Heading>
-        <Button onClick={() => navigate('/ladders/create')}>Create</Button>
+        <Button onClick={() => navigate('/ladders/create')} colorScheme="blue">
+          Create
+        </Button>
       </Flex>
       <DataTable data={data?.items} columns={columns} />
     </MainLayout>

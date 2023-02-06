@@ -266,45 +266,50 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
     };
 
     return (
-      <ChakraTable {...rest}>
-        <Thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
-                const meta: any = header.column.columnDef.meta;
-                return (
-                  <Th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    isNumeric={meta?.isNumeric}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                  </Th>
-                );
-              })}
-            </Tr>
-          ))}
-        </Thead>
-        <Tbody>
-          {table.getRowModel().rows.map((row) => (
-            <Tr key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
-                const meta: any = cell.column.columnDef.meta;
-                return (
-                  <Td key={cell.id} isNumeric={meta?.isNumeric}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Td>
-                );
-              })}
-            </Tr>
-          ))}
-        </Tbody>
-      </ChakraTable>
+      <Box overflowX="auto">
+        <ChakraTable {...rest}>
+          <Thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+                  const meta: any = header.column.columnDef.meta;
+                  return (
+                    <Th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      isNumeric={meta?.isNumeric}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </Th>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {table.getRowModel().rows.map((row) => (
+              <Tr key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
+                  const meta: any = cell.column.columnDef.meta;
+                  return (
+                    <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </Td>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Tbody>
+        </ChakraTable>
+      </Box>
     );
   };
 
@@ -314,7 +319,7 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
     <LadderTabContainer title="Ladder">
       <Box>
         {isAdmin && (
-          <Flex mb={4}>
+          <HStack mb={4}>
             <Button
               onClick={handleEdit}
               colorScheme="blue"
@@ -327,7 +332,7 @@ export const LeaderboardView = ({ ladder, isAdmin }: LeaderboardProps) => {
                 Cancel
               </Button>
             )}
-          </Flex>
+          </HStack>
         )}
         <DataTable
           columns={columns}

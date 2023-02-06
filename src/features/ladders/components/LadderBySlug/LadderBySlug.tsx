@@ -3,8 +3,8 @@ import {
   Box,
   Flex,
   Heading,
+  SimpleGrid,
   Stat,
-  StatGroup,
   StatLabel,
   StatNumber,
   Tab,
@@ -156,7 +156,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
             <RegisterButton ladder={ladder} />
           )}
         </Flex>
-        <StatGroup gap={4}>
+        <SimpleGrid spacing={4} columns={{ base: 2, md: 4 }}>
           <Stat>
             <StatLabel>Start Date</StatLabel>
             <StatNumber fontSize="md">
@@ -192,7 +192,7 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
                 : ladder.status}
             </Badge>
           </Stat>
-        </StatGroup>
+        </SimpleGrid>
       </Box>
       <Tabs
         variant="soft-rounded"
@@ -216,12 +216,12 @@ export const LadderBySlug = ({ ladder }: LadderBySlugProps) => {
           })}
         </TabList>
         <Suspense fallback={<Loading />}>
-          <TabPanels>
+          <TabPanels mt={6}>
             {tabs.map((tab) => {
               if (!tab.visible) return null;
 
               return (
-                <TabPanel key={`tab-component-${tab.slug}`}>
+                <TabPanel key={`tab-component-${tab.slug}`} p={0}>
                   {tab.Component}
                 </TabPanel>
               );

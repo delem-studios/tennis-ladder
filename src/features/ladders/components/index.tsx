@@ -6,12 +6,10 @@ export * from './LadderDetails';
 export * from './LadderForm';
 export * from './LadderMatches';
 export * from './LadderParticipants';
+export * from './LadderRegistrations';
 export * from './LadderSettings';
 export * from './LadderTabContainer';
 export * from './LeaderboardView';
 export * from './MyChallenges';
-export * from './ParticipantsList';
 export * from './PendingChallenge';
 export * from './RegisterButton';
-
-export * from './LadderRegistrations';

@@ -116,7 +116,7 @@ export const LadderSettings = ({ ladder }: LadderSettingsProps) => {
   if (isRulesLoading) return <Loading />;
 
   return (
-    <Container>
+    <Container p={0}>
       <LadderTabContainer title="Settings">
         <VStack spacing={4}>
           <SettingsItem

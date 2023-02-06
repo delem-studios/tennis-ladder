@@ -1,4 +1,10 @@
-import { Button, HStack, StatGroup, Textarea } from '@chakra-ui/react';
+import {
+  Button,
+  HStack,
+  SimpleGrid,
+  StatGroup,
+  Textarea,
+} from '@chakra-ui/react';
 import ChakraReactMarkdown from 'chakra-ui-markdown-renderer';
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -52,7 +58,7 @@ export const LadderDetails = ({ ladder }: LadderDetailsProps) => {
 
   return (
     <LadderTabContainer title="Details">
-      <StatGroup gap={4} mb={6}>
+      <SimpleGrid spacing={4} mb={6} columns={{ base: 2, md: 4 }}>
         <Info
           label="Days to Respond"
           content={
@@ -77,14 +83,14 @@ export const LadderDetails = ({ ladder }: LadderDetailsProps) => {
           label="Inbound Challenge Limit"
           content={rules?.inboundChallengeLimit}
         />
-      </StatGroup>
+      </SimpleGrid>
       <ReactMarkdown
         components={ChakraReactMarkdown()}
         children={rules?.details || 'No details have been provided.'}
         skipHtml
       />
       {isAdmin && !isEditing && (
-        <Button onClick={handleEdit} my={4}>
+        <Button onClick={handleEdit} my={4} colorScheme="blue">
           Edit
         </Button>
       )}
